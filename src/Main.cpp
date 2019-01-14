@@ -1,7 +1,8 @@
 #include "JsonFile.hpp"
 
 int main() {
-	JsonFile testFiJe = JsonFile("content/engine.json");
+	JsonFile testFile = JsonFile("content/engine.json");
+	std::string programId = testFile.Get<std::string>("engine.program id");
 
 	return 0;
 }
