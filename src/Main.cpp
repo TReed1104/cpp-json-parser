@@ -1,10 +1,8 @@
 #include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <stdio.h>
+
 
 void enterObject(const rapidjson::Value &obj, size_t indent = 0) {
 	if (obj.IsObject()) {
