@@ -39,7 +39,18 @@ JsonFile::~JsonFile() {
 
 }
 
-bool JsonFile::Load(const std::string & fileName) {
+bool JsonFile::Load(const std::string& fileName) {
+	std::ifstream file;
+	file.open(fileName);
+	if (!file) {
+		std::cout << "JsonFile.hpp >>>> Error opening file, Json File was not loaded" << std::endl;
+		return false;
+	}
+	char c;
+	while (file >> c) {
+		rawFileText += c;
+	}
+
 
 	std::cout << "JsonFile.hpp >>>> File was not loaded" << std::endl;
 	return false;
