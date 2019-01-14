@@ -48,10 +48,16 @@ bool JsonFile::Load(const std::string& fileName) {
 	jsonDocument = new rapidjson::Document();
 	jsonDocument->ParseStream(inputStream);
 	
-	std::cout << "JsonFile.hpp >>>> File was not loaded" << std::endl;
-	return false;
+	if (jsonDocument->HasParseError()) {
+		std::cout << "JsonFile.hpp >>>> File: " << fileName <<" was not loaded" << std::endl;
+		std::cout << "JsonFile.hpp >>>> Parser Errors: " << rapidjson::GetParseErrorFunc(jsonDocument) << std::endl;
+		return false;
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> File: " << fileName << " was loaded successfully" << std::endl;
+		return true;
+	}
 }
-
 void JsonFile::enterObject(const rapidjson::Value & obj, size_t indent) {
 	if (obj.IsObject()) {
 		for (rapidjson::Value::ConstMemberIterator itr = obj.MemberBegin(); itr != obj.MemberEnd(); ++itr) {   //iterate through object   
