@@ -25,7 +25,6 @@ private:
 	std::string rawFileText;
 
 	bool Load(const std::string& fileName);
-	void enterObject(const rapidjson::Value &obj, size_t indent = 0);
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 
 };
@@ -44,7 +43,6 @@ JsonFile::~JsonFile() {
 }
 
 bool JsonFile::Load(const std::string& fileName) {
-
 	std::ifstream fileStream(fileName);
 	rapidjson::IStreamWrapper inputStream(fileStream);
 	jsonDocument = new rapidjson::Document();
@@ -58,73 +56,6 @@ bool JsonFile::Load(const std::string& fileName) {
 	else {
 		std::cout << "JsonFile.hpp >>>> File: " << fileName << " was loaded successfully" << std::endl;
 		return true;
-	}
-}
-void JsonFile::enterObject(const rapidjson::Value & obj, size_t indent) {
-	if (obj.IsObject()) {
-		for (rapidjson::Value::ConstMemberIterator itr = obj.MemberBegin(); itr != obj.MemberEnd(); ++itr) {   //iterate through object   
-			const rapidjson::Value& objName = obj[itr->name.GetString()];
-			for (size_t i = 0; i != indent; ++i) {
-				std::cout << " ";
-			}
-
-			std::cout << itr->name.GetString() << ": "; //key name
-
-			if (itr->value.IsNumber()) {
-				std::cout << itr->value.GetInt();
-			}
-			else if (itr->value.IsString()) {
-				std::cout << itr->value.GetString();
-			}
-			else if (itr->value.IsBool()) {
-				std::cout << itr->value.GetBool();
-			}
-			else if (itr->value.IsArray()) {
-				bool isFirst = true;
-				for (rapidjson::SizeType i = 0; i < itr->value.Size(); i++) {
-					if (itr->value[i].IsNumber()) {
-						std::cout << itr->value[i].GetInt();
-					}
-					else if (itr->value[i].IsString()) {
-						std::cout << itr->value[i].GetString();
-					}
-					else if (itr->value[i].IsBool()) {
-						std::cout << itr->value[i].GetBool();
-					}
-					else if (itr->value[i].IsObject()) {
-
-						const rapidjson::Value& m = itr->value[i];
-						for (auto& v : m.GetObject()) {
-							if (isFirst) {
-								std::cout << "\n";
-								isFirst = false;
-							}
-							if (m[v.name.GetString()].IsNumber()) {
-								std::cout << v.name.GetString() << ": " << m[v.name.GetString()].GetInt();
-							}
-							else if (m[v.name.GetString()].IsString()) {
-								std::cout << v.name.GetString() << ": " << m[v.name.GetString()].GetString();
-							}
-							else if (m[v.name.GetString()].IsBool()) {
-								std::cout << v.name.GetString() << ": " << m[v.name.GetString()].GetBool();
-							}
-							else  if (m[v.name.GetString()].IsArray()) {
-								std::cout << "Nested Array";
-							}
-							else  if (m[v.name.GetString()].IsObject()) {
-								for (size_t i = 0; i != indent + 4; ++i) {
-									std::cout << " ";
-								}
-								std::cout << v.name.GetString() << ": " << std::endl;
-								enterObject(m[v.name.GetString()], indent + 8);
-							}
-						}
-					}
-				}
-			}
-			std::cout << std::endl;
-			enterObject(objName, indent + 4);
-		}
 	}
 }
 std::vector<std::string> JsonFile::SplitString(const std::string & stringToSplit, const char & splitToken) {
