@@ -17,7 +17,7 @@ public:
 	~JsonFile();
 
 	template <typename T> T Get(const std::string& objectName);
-	template<typename T> void Set(const std::string& objectName, const T& value);
+	template <typename T> void Set(const std::string& objectName, const T& value);
 
 
 private:
@@ -154,24 +154,25 @@ std::vector<std::string> JsonFile::SplitString(const std::string & stringToSplit
 
 }
 
+
 // Getters
-template<typename T> T JsonFile::Get(const std::string& objectName) {
+template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	std::cout << "JsonFile.hpp >>>> Default Template for Get, type specific ones should get called instead" << std::endl;
 	return 0;
 }
-template<> int JsonFile::Get(const std::string& objectName) {
+template<> inline int JsonFile::Get(const std::string& objectName) {
 	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	std::vector<std::string> splitString = SplitString(objectName, '.');
 
 	return 0;
 }
-template<> std::string JsonFile::Get(const std::string& objectName) {
+template<> inline std::string JsonFile::Get(const std::string& objectName) {
 	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	std::vector<std::string> splitString = SplitString(objectName, '.');
 
 	return "";
 }
-template<> bool JsonFile::Get(const std::string& objectName) {
+template<> inline bool JsonFile::Get(const std::string& objectName) {
 	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	std::vector<std::string> splitString = SplitString(objectName, '.');
 
@@ -183,13 +184,13 @@ template<typename T> void JsonFile::Set(const std::string & objectName, const T 
 	std::cout << "JsonFile.hpp >>>> Default Template for Set, type specific ones should get called instead" << std::endl;
 	return 0;
 }
-template<> void JsonFile::Set(const std::string & objectName, const std::string& value) {
+template<> inline void JsonFile::Set(const std::string & objectName, const std::string& value) {
 
 }
-template<> void JsonFile::Set(const std::string & objectName, const int& value) {
+template<> inline void JsonFile::Set(const std::string & objectName, const int& value) {
 
 }
-template<> void JsonFile::Set(const std::string & objectName, const bool& value) {
+template<> inline void JsonFile::Set(const std::string & objectName, const bool& value) {
 
 }
 #endif
