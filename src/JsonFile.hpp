@@ -180,7 +180,7 @@ template<> inline bool JsonFile::Get(const std::string& objectName) {
 }
 
 // Setters
-template<typename T> void JsonFile::Set(const std::string & objectName, const T & value) {
+template<typename T> inline void JsonFile::Set(const std::string & objectName, const T & value) {
 	std::cout << "JsonFile.hpp >>>> Default Template for Set, type specific ones should get called instead" << std::endl;
 	return 0;
 }
