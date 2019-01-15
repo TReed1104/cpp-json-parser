@@ -160,12 +160,21 @@ template<typename T> T JsonFile::Get(const std::string& objectName) {
 	return 0;
 }
 template<> int JsonFile::Get(const std::string& objectName) {
+	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+	std::vector<std::string> splitString = SplitString(objectName, '.');
+
 	return 0;
 }
 template<> std::string JsonFile::Get(const std::string& objectName) {
+	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+	std::vector<std::string> splitString = SplitString(objectName, '.');
+
 	return "";
 }
 template<> bool JsonFile::Get(const std::string& objectName) {
+	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+	std::vector<std::string> splitString = SplitString(objectName, '.');
+
 	return false;
 }
 
