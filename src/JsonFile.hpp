@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include "rapidjson/document.h"
 #include <rapidjson/istreamwrapper.h>
 
@@ -14,7 +15,7 @@ public:
 
 	JsonFile(const std::string& fileName = "NOT GIVEN");
 	~JsonFile();
-	
+
 	template <typename T> T Get(const std::string& objectName);
 	template<typename T> void Set(const std::string& objectName, const T& value);
 
@@ -25,6 +26,7 @@ private:
 
 	bool Load(const std::string& fileName);
 	void enterObject(const rapidjson::Value &obj, size_t indent = 0);
+	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 
 };
 
@@ -47,9 +49,9 @@ bool JsonFile::Load(const std::string& fileName) {
 	rapidjson::IStreamWrapper inputStream(fileStream);
 	jsonDocument = new rapidjson::Document();
 	jsonDocument->ParseStream(inputStream);
-	
+
 	if (jsonDocument->HasParseError()) {
-		std::cout << "JsonFile.hpp >>>> File: " << fileName <<" was not loaded" << std::endl;
+		std::cout << "JsonFile.hpp >>>> File: " << fileName << " was not loaded" << std::endl;
 		std::cout << "JsonFile.hpp >>>> Parser Errors: " << rapidjson::GetParseErrorFunc(jsonDocument) << std::endl;
 		return false;
 	}
@@ -124,6 +126,32 @@ void JsonFile::enterObject(const rapidjson::Value & obj, size_t indent) {
 			enterObject(objName, indent + 4);
 		}
 	}
+}
+std::vector<std::string> JsonFile::SplitString(const std::string & stringToSplit, const char & splitToken) {
+	// Splits a string using the given splitToken, E.g. ""The.Cat.Sat.On.The.Mat" splits with token '.' into Vector[6] = {The, Cat, Sat, On, The, Mat};
+
+	std::vector<std::string> splitString;	// Stores the split sections of string for the return.
+	std::string currentSplit = "";			// Stores the current section being split off.
+
+	size_t sizeOfStringArray = stringToSplit.size();			// .Size() of a const so it never changes and we store it once.
+	for (size_t i = 0; i < sizeOfStringArray; i++) {
+		char currentChar = stringToSplit.at(i);
+		if (currentChar == splitToken) {
+			splitString.push_back(currentSplit);
+			currentSplit = "";
+		}
+		else {
+			currentSplit += currentChar;
+		}
+
+		if (i == sizeOfStringArray - 1 && currentChar != splitToken) {
+			// Catches the final section of string as there might not be a follow up split token.
+			splitString.push_back(currentSplit);
+		}
+	}
+
+	return splitString;
+
 }
 
 // Getters
