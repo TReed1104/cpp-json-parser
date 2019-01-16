@@ -93,8 +93,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 }
 template<> inline int JsonFile::Get(const std::string& objectName) {
 	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<int> - Target: '" << objectName << "'" << std::endl;
-	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-	std::vector<std::string> splitString = SplitString(objectName, '.');
+	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	int returnValue = NULL;
 
 	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<int> - Accessing object/key: '" << splitString[0] << "'" << std::endl;
@@ -123,8 +122,7 @@ template<> inline int JsonFile::Get(const std::string& objectName) {
 }
 template<> inline float JsonFile::Get(const std::string& objectName) {
 	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<float> - Target: '" << objectName << "'" << std::endl;
-	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-	std::vector<std::string> splitString = SplitString(objectName, '.');
+	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	float returnValue = NULL;
 
 	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<int> - Accessing object/key: '" << splitString[0] << "'" << std::endl;
