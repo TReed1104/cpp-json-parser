@@ -15,8 +15,8 @@
         "height": 15
       },
       "scalar": {
-        "x": 2.0,
-        "y": 2.0
+        "x": 2,
+        "y": 2
       }
     },
     "content": {
@@ -92,8 +92,8 @@
     "game controller": {
       "max number of controllers": 4,
       "index of player": 0,
-      "thumb stick dead zone": 8000,
-      "trigger dead zone": 8000,
+      "thumb stick dead zone": 8000.0,
+      "trigger dead zone": 8000.0,
       "pressed state flag": 1
     },
     "shaders": [
