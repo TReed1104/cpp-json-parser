@@ -203,9 +203,8 @@ template<> inline bool JsonFile::Get(const std::string& objectName) {
 	// Get a bool value from the JSON DOM
 	bool returnValue = false;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];		// Get the first object we are looking for
 
-	// Get the first object we are looking for
-	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];
 	const size_t sizeOfSplitString = splitString.size();
 	for (size_t i = 1; i < sizeOfSplitString; i++) {
 		if (!value->IsArray()) {
