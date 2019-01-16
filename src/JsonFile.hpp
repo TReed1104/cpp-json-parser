@@ -22,7 +22,6 @@ public:
 
 private:
 	rapidjson::Document* jsonDocument;
-	std::string rawFileText;
 
 	bool Load(const std::string& fileName);
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
