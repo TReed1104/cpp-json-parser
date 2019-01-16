@@ -7,6 +7,7 @@ int main() {
 
 	float versionF = testFile.Get<float>("engine.window.scalar.x");
 	double versionD = testFile.Get<double>("engine.window.scalar.y");
+	std::string developerName = testFile.Get<std::string>("engine.developer");
 
 	return 0;
 }
