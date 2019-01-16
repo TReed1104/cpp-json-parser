@@ -127,6 +127,12 @@ template<> inline float JsonFile::Get(const std::string& objectName) {
 
 	return 0.0f;
 }
+template<> inline double JsonFile::Get(const std::string& objectName) {
+	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+	std::vector<std::string> splitString = SplitString(objectName, '.');
+
+	return 0.0;
+}
 template<> inline std::string JsonFile::Get(const std::string& objectName) {
 	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	std::vector<std::string> splitString = SplitString(objectName, '.');
@@ -149,6 +155,9 @@ template<> inline void JsonFile::Set(const std::string & objectName, const int& 
 
 }
 template<> inline void JsonFile::Set(const std::string & objectName, const float& value) {
+
+}
+template<> inline void JsonFile::Set(const std::string & objectName, const double& value) {
 
 }
 template<> inline void JsonFile::Set(const std::string & objectName, const std::string& value) {
