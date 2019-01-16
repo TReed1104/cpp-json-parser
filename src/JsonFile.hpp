@@ -200,11 +200,10 @@ template<> inline std::string JsonFile::Get(const std::string& objectName) {
 	return returnValue;
 }
 template<> inline bool JsonFile::Get(const std::string& objectName) {
-	// Get a bool value from the JSON DOM
 	bool returnValue = false;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];		// Get the first object we are looking for
-
+	// Iterate through our substrings to traverse the JSON DOM
 	const size_t sizeOfSplitString = splitString.size();
 	for (size_t i = 1; i < sizeOfSplitString; i++) {
 		if (!value->IsArray()) {
@@ -216,14 +215,11 @@ template<> inline bool JsonFile::Get(const std::string& objectName) {
 			value = &(*value)[std::stoi(splitString[i])];
 		}
 	}
+	// Check we haven't ended up with a JSON object instead of a value
 	if (!value->IsObject()) {
-		returnValue = value->GetBool();
+		returnValue = value->GetBool();	// Get the value to return
 	}
-	else {
-		std::cout << "JsonFile.hpp >>>> ERROR >>>> File: " << fileName << " Get<bool> tried to return an object" << std::endl;
-	}
-
-	return returnValue;
+	return returnValue;		// Return the found value or default value if not
 }
 
 // Setters= 
