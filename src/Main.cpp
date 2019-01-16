@@ -6,8 +6,8 @@ int main() {
 
 	// Get Tests
 	int getIntTest = testFile.Get<int>("engine.window.grid size.width");
-	float getFloatTest = testFile.Get<float>("engine.window.scalar.x");
-	double getDoubleTest = testFile.Get<double>("engine.window.scalar.y");
+	float getFloatTest = testFile.Get<float>("engine.game controller.thumb stick dead zone");
+	double getDoubleTest = testFile.Get<double>("engine.game controller.trigger dead zone");
 	std::string getStringTest = testFile.Get<std::string>("engine.developer");
 
 	// Close the test program
