@@ -30,6 +30,7 @@ private:
 };
 
 JsonFile::JsonFile(const std::string& fileName) {
+	this->fileName = fileName;
 	if (fileName != "NOT GIVEN") {
 		isFileLoaded = Load(fileName);
 	}
