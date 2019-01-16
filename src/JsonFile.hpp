@@ -106,8 +106,7 @@ template<> inline int JsonFile::Get(const std::string& objectName) {
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<int> - Accessing Array element: '" << splitString[i] << "'" << std::endl;
-			int index = std::stoi(splitString[i]);
-			value = &(*value)[index];
+			value = &(*value)[std::stoi(splitString[i])];
 		}
 	}
 	if (!value->IsObject()) {
@@ -134,8 +133,7 @@ template<> inline float JsonFile::Get(const std::string& objectName) {
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<float> - Accessing Array element: '" << splitString[i] << "'" << std::endl;
-			int index = std::stoi(splitString[i]);
-			value = &(*value)[index];
+			value = &(*value)[std::stoi(splitString[i])];
 		}
 	}
 	if (!value->IsObject()) {
@@ -162,8 +160,7 @@ template<> inline double JsonFile::Get(const std::string& objectName) {
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<double> - Accessing Array element: '" << splitString[i] << "'" << std::endl;
-			int index = std::stoi(splitString[i]);
-			value = &(*value)[index];
+			value = &(*value)[std::stoi(splitString[i])];
 		}
 	}
 	if (!value->IsObject()) {
@@ -190,8 +187,7 @@ template<> inline std::string JsonFile::Get(const std::string& objectName) {
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Accessing Array element: '" << splitString[i] << "'" << std::endl;
-			int index = std::stoi(splitString[i]);
-			value = &(*value)[index];
+			value = &(*value)[std::stoi(splitString[i])];
 		}
 	}
 	if (!value->IsObject()) {
@@ -218,8 +214,7 @@ template<> inline bool JsonFile::Get(const std::string& objectName) {
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<bool> - Accessing Array element: '" << splitString[i] << "'" << std::endl;
-			int index = std::stoi(splitString[i]);
-			value = &(*value)[index];
+			value = &(*value)[std::stoi(splitString[i])];
 		}
 	}
 	if (!value->IsObject()) {
