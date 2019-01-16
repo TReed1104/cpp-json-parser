@@ -115,7 +115,6 @@ template<> inline int JsonFile::Get(const std::string& objectName) {
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<int> tried to return an object" << std::endl;
-		return NULL;
 	}
 
 	return returnValue;
@@ -144,7 +143,6 @@ template<> inline float JsonFile::Get(const std::string& objectName) {
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<float> tried to return an object" << std::endl;
-		return NULL;
 	}
 
 	return returnValue;
@@ -173,7 +171,6 @@ template<> inline double JsonFile::Get(const std::string& objectName) {
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<double> tried to return an object" << std::endl;
-		return NULL;
 	}
 
 	return returnValue;
@@ -202,7 +199,6 @@ template<> inline std::string JsonFile::Get(const std::string& objectName) {
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> tried to return an object" << std::endl;
-		return returnValue;
 	}
 
 	return returnValue;
