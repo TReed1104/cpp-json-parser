@@ -173,31 +173,26 @@ template<> inline double JsonFile::Get(const std::string& objectName) {
 	return returnValue;
 }
 template<> inline std::string JsonFile::Get(const std::string& objectName) {
-	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Target: '" << objectName << "'" << std::endl;
-	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	std::string returnValue = "";
-
-	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Accessing object/key: '" << splitString[0] << "'" << std::endl;
-	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];
+	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];		// Get the first object we are looking for
+	// Iterate through our substrings to traverse the JSON DOM
 	const size_t sizeOfSplitString = splitString.size();
 	for (size_t i = 1; i < sizeOfSplitString; i++) {
 		if (!value->IsArray()) {
-			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Accessing object/key: '" << splitString[i] << "'" << std::endl;
+			// Point to the next object or key
 			value = &(*value)[splitString[i].c_str()];
 		}
 		else {
-			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Accessing Array element: '" << splitString[i] << "'" << std::endl;
+			// Point to the object/key/array at the indicated index in the array
 			value = &(*value)[std::stoi(splitString[i])];
 		}
 	}
+	// Check we haven't ended up with a JSON object instead of a value
 	if (!value->IsObject()) {
-		returnValue = value->GetString();
+		returnValue = value->GetString();	// Get the value to return
 	}
-	else {
-		std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> tried to return an object" << std::endl;
-	}
-
-	return returnValue;
+	return returnValue;		// Return the found value or default value if not
 }
 template<> inline bool JsonFile::Get(const std::string& objectName) {
 	bool returnValue = false;
