@@ -179,10 +179,33 @@ template<> inline double JsonFile::Get(const std::string& objectName) {
 	return returnValue;
 }
 template<> inline std::string JsonFile::Get(const std::string& objectName) {
-	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-	std::vector<std::string> splitString = SplitString(objectName, '.');
+	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Target: '" << objectName << "'" << std::endl;
+	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+	std::string returnValue = "";
 
-	return "";
+	std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Accessing object/key: '" << splitString[0] << "'" << std::endl;
+	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];
+	const size_t sizeOfSplitString = splitString.size();
+	for (size_t i = 1; i < sizeOfSplitString; i++) {
+		if (!value->IsArray()) {
+			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Accessing object/key: '" << splitString[i] << "'" << std::endl;
+			value = &(*value)[splitString[i].c_str()];
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> - Accessing Array element: '" << splitString[i] << "'" << std::endl;
+			int index = std::stoi(splitString[i]);
+			value = &(*value)[index];
+		}
+	}
+	if (!value->IsObject()) {
+		returnValue = value->GetString();
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> File: " << fileName << " Get<std::string> tried to return an object" << std::endl;
+		return returnValue;
+	}
+
+	return returnValue;
 }
 template<> inline bool JsonFile::Get(const std::string& objectName) {
 	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
