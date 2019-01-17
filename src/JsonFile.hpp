@@ -93,7 +93,6 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	return 0;
 }
 template<> inline int JsonFile::Get(const std::string& objectName) {
-	bool isMemberPresent = jsonDocument->HasMember("");
 	int returnValue = NULL;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 
