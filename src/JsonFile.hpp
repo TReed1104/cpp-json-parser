@@ -7,6 +7,7 @@
 #include <vector>
 #include "rapidjson/document.h"
 #include <rapidjson/istreamwrapper.h>
+#include <rapidjson/error/en.h>
 
 class JsonFile {
 public:
@@ -50,7 +51,7 @@ bool JsonFile::Load(const std::string& fileName) {
 
 	if (jsonDocument->HasParseError()) {
 		std::cout << "JsonFile.hpp >>>> File: " << fileName << " was not loaded" << std::endl;
-		std::cout << "JsonFile.hpp >>>> Parser Errors: " << rapidjson::GetParseErrorFunc(jsonDocument) << std::endl;
+		std::cout << "JsonFile.hpp >>>> Parser Errors: " << rapidjson::GetParseError_En(jsonDocument->GetParseError()) << std::endl;
 		return false;
 	}
 	else {
@@ -92,6 +93,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	return 0;
 }
 template<> inline int JsonFile::Get(const std::string& objectName) {
+	bool isMemberPresent = jsonDocument->HasMember("");
 	int returnValue = NULL;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];		// Get the first object we are looking for
