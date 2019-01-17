@@ -269,17 +269,53 @@ template<> inline double JsonFile::Get(const std::string& objectName) {
 template<> inline std::string JsonFile::Get(const std::string& objectName) {
 	std::string returnValue = "";
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-	rapidjson::Value* value = &(*jsonDocument)[splitString[0].c_str()];		// Get the first object we are looking for
+
+	rapidjson::Value* value;
+	if (jsonDocument->HasMember(splitString.front().c_str())) {
+		value = &(*jsonDocument)[splitString.front().c_str()];				// Get the first object we are looking for
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+		return returnValue;
+	}
 	// Iterate through our substrings to traverse the JSON DOM
 	const size_t sizeOfSplitString = splitString.size();
 	for (size_t i = 1; i < sizeOfSplitString; i++) {
 		if (!value->IsArray()) {
-			// Point to the next object or key
-			value = &(*value)[splitString[i].c_str()];
+			if (value->HasMember(splitString[i].c_str())) {
+				value = &(*value)[splitString[i].c_str()];	// Get the first object we are looking for
+			}
+			else {
+				std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+				return returnValue;
+			}
 		}
 		else {
 			// Point to the object/key/array at the indicated index in the array
-			value = &(*value)[std::stoi(splitString[i])];
+			int arraySize = value->Size();
+			int indexOfValue = 0;
+			// try and convert the substring to an int, if not return default
+			try {
+				indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+			}
+			catch (...) {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
+				return returnValue;
+			}
+			// Check the value is accessible in the bounds of the array
+			if (arraySize > 0) {
+				if (arraySize > indexOfValue) {
+					value = &(*value)[indexOfValue];
+				}
+				else {
+					std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
+					return returnValue;
+				}
+			}
+			else {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
+				return returnValue;
+			}
 		}
 	}
 	// Check we haven't ended up with a JSON object instead of a value
