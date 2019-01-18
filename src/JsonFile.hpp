@@ -274,7 +274,13 @@ template<> inline double JsonFile::Get(const std::string& objectName) {
 	}
 	// Check we haven't ended up with a JSON object instead of a value
 	if (!value->IsObject()) {
-		returnValue = value->GetDouble();	// Get the value to return
+		if (value->IsDouble()) {
+			returnValue = value->GetDouble();	// Get the value to return
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> " << objectName << " is not an Int" << std::endl;
+			return returnValue;
+		}
 	}
 	return returnValue;		// Return the found value or default value if not
 }
