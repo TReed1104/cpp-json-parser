@@ -59,7 +59,7 @@ bool JsonFile::Load(const std::string& fileName) {
 		return true;
 	}
 }
-std::vector<std::string> JsonFile::SplitString(const std::string & stringToSplit, const char & splitToken) {
+std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit, const char& splitToken) {
 	// Splits a string using the given splitToken, E.g. ""The.Cat.Sat.On.The.Mat" splits with token '.' into Vector[6] = {The, Cat, Sat, On, The, Mat};
 
 	std::vector<std::string> splitString;	// Stores the split sections of string for the return.
@@ -413,23 +413,23 @@ template<> inline bool JsonFile::Get(const std::string& objectName) {
 }
 
 // Setters
-template<typename T> inline void JsonFile::Set(const std::string & objectName, const T & value) {
+template<typename T> inline void JsonFile::Set(const std::string& objectName, const T & value) {
 	std::cout << "JsonFile.hpp >>>> Default Template for Set, type specific ones should get called instead" << std::endl;
 	return 0;
 }
-template<> inline void JsonFile::Set(const std::string & objectName, const int& value) {
+template<> inline void JsonFile::Set(const std::string& objectName, const int& value) {
 
 }
-template<> inline void JsonFile::Set(const std::string & objectName, const float& value) {
+template<> inline void JsonFile::Set(const std::string& objectName, const float& value) {
 
 }
-template<> inline void JsonFile::Set(const std::string & objectName, const double& value) {
+template<> inline void JsonFile::Set(const std::string& objectName, const double& value) {
 
 }
-template<> inline void JsonFile::Set(const std::string & objectName, const std::string& value) {
+template<> inline void JsonFile::Set(const std::string& objectName, const std::string& value) {
 
 }
-template<> inline void JsonFile::Set(const std::string & objectName, const bool& value) {
+template<> inline void JsonFile::Set(const std::string& objectName, const bool& value) {
 
 }
 #endif
