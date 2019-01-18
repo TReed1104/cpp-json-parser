@@ -26,9 +26,9 @@ private:
 
 	bool Load(const std::string& fileName);
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
-	template <typename T> T GetValue(const rapidjson::Value& object);
-	template <typename T> T GetDefaultValue();
 	template <typename T> T TraverseJson(const std::string& objectName);
+	template <typename T> T GetDefaultValue();
+	template <typename T> T GetValue(const rapidjson::Value& object);
 
 };
 
