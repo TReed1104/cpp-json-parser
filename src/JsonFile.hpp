@@ -86,7 +86,6 @@ std::vector<std::string> JsonFile::SplitString(const std::string & stringToSplit
 
 }
 
-
 // Getters
 template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	std::cout << "JsonFile.hpp >>>> Default Template for Get, type specific ones should get called instead" << std::endl;
@@ -413,7 +412,7 @@ template<> inline bool JsonFile::Get(const std::string& objectName) {
 	return returnValue;		// Return the found value or default value if not
 }
 
-// Setters= 
+// Setters
 template<typename T> inline void JsonFile::Set(const std::string & objectName, const T & value) {
 	std::cout << "JsonFile.hpp >>>> Default Template for Set, type specific ones should get called instead" << std::endl;
 	return 0;
