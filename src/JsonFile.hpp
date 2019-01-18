@@ -90,17 +90,63 @@ std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit,
 	return splitString;
 
 }
-
-// Get Functions
-template<typename T> inline T JsonFile::Get(const std::string& objectName) {
+template<typename T> inline T JsonFile::TraverseJson(const std::string& objectName) {
 	T result;
-	if (isFileLoaded) {
-		result = TraverseJson<T>(objectName);
+	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+
+	rapidjson::Value* value;
+	if (jsonDocument->HasMember(splitString.front().c_str())) {
+		value = &(*jsonDocument)[splitString.front().c_str()];				// Get the first object we are looking for
 	}
 	else {
-		result = GetDefaultValue<T>();
+		std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+		return GetDefaultValue<T>();
 	}
-	return result;
+	// Iterate through our substrings to traverse the JSON DOM
+	const size_t sizeOfSplitString = splitString.size();
+	for (size_t i = 1; i < sizeOfSplitString; i++) {
+		if (!value->IsArray()) {
+			if (value->HasMember(splitString[i].c_str())) {
+				value = &(*value)[splitString[i].c_str()];	// Get the first object we are looking for
+			}
+			else {
+				std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+				return GetDefaultValue<T>();
+			}
+		}
+		else {
+			// Point to the object/key/array at the indicated index in the array
+			int arraySize = value->Size();
+			int indexOfValue = 0;
+			// try and convert the substring to an int, if not return default
+			try {
+				indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+			}
+			catch (...) {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
+				return GetDefaultValue<T>();
+			}
+			// Check the value is accessible in the bounds of the array
+			if (arraySize > 0) {
+				if (arraySize > indexOfValue) {
+					value = &(*value)[indexOfValue];
+				}
+				else {
+					std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
+					return GetDefaultValue<T>();
+				}
+			}
+			else {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
+				return GetDefaultValue<T>();
+			}
+		}
+	}
+	// Check we haven't ended up with a JSON object instead of a value
+	if (!value->IsObject()) {
+		result = GetValue<T>(*value);
+	}
+	return result;		// Return the found value or default value if not
 }
 
 // Get Default value Functions
@@ -183,66 +229,17 @@ template<> inline bool JsonFile::GetValue(const rapidjson::Value& object) {
 	}
 }
 
-// Traversing the JSON Function
-template<typename T> inline T JsonFile::TraverseJson(const std::string& objectName) {
+// Get Functions
+template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	T result;
-	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-
-	rapidjson::Value* value;
-	if (jsonDocument->HasMember(splitString.front().c_str())) {
-		value = &(*jsonDocument)[splitString.front().c_str()];				// Get the first object we are looking for
+	if (isFileLoaded) {
+		result = TraverseJson<T>(objectName);
 	}
 	else {
-		std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
-		return GetDefaultValue<T>();
+		result = GetDefaultValue<T>();
 	}
-	// Iterate through our substrings to traverse the JSON DOM
-	const size_t sizeOfSplitString = splitString.size();
-	for (size_t i = 1; i < sizeOfSplitString; i++) {
-		if (!value->IsArray()) {
-			if (value->HasMember(splitString[i].c_str())) {
-				value = &(*value)[splitString[i].c_str()];	// Get the first object we are looking for
-			}
-			else {
-				std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
-				return GetDefaultValue<T>();
-			}
-		}
-		else {
-			// Point to the object/key/array at the indicated index in the array
-			int arraySize = value->Size();
-			int indexOfValue = 0;
-			// try and convert the substring to an int, if not return default
-			try {
-				indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
-			}
-			catch (...) {
-				std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
-				return GetDefaultValue<T>();
-			}
-			// Check the value is accessible in the bounds of the array
-			if (arraySize > 0) {
-				if (arraySize > indexOfValue) {
-					value = &(*value)[indexOfValue];
-				}
-				else {
-					std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
-					return GetDefaultValue<T>();
-				}
-			}
-			else {
-				std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
-				return GetDefaultValue<T>();
-			}
-		}
-	}
-	// Check we haven't ended up with a JSON object instead of a value
-	if (!value->IsObject()) {
-		result = GetValue<T>(*value);
-	}
-	return result;		// Return the found value or default value if not
+	return result;
 }
-
 
 // Set Functions
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T & value) {
