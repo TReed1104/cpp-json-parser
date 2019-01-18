@@ -237,6 +237,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 		return result;
 	}
 	else {
+		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
 		result = GetDefaultValue<T>();
 		return result;
 	}
