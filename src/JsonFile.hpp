@@ -26,9 +26,12 @@ private:
 
 	bool Load(const std::string& fileName);
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
+	template <typename T> T GetValue(const std::string& objectName);
+	template <typename T> T GetDefaultValue();
 
 };
 
+// Constructors & Deconstructors
 JsonFile::JsonFile(const std::string& fileName) {
 	this->fileName = fileName;
 	if (fileName != "NOT GIVEN") {
@@ -43,6 +46,7 @@ JsonFile::~JsonFile() {
 	delete jsonDocument;
 }
 
+// Generl Class Functions
 bool JsonFile::Load(const std::string& fileName) {
 	std::ifstream fileStream(fileName);
 	rapidjson::IStreamWrapper inputStream(fileStream);
@@ -86,12 +90,28 @@ std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit,
 
 }
 
-// Getters
+// Get Functions
 template<typename T> inline T JsonFile::Get(const std::string& objectName) {
-	std::cout << "JsonFile.hpp >>>> Default Template for Get, type specific ones should get called instead" << std::endl;
-	return 0;
+	T result;
+	if (isFileLoaded) {
+		result = GetValue<T>(objectName);
+	}
+	else {
+		result = GetDefaultValue<T>();
+	}
+	return result;
 }
-template<> inline int JsonFile::Get(const std::string& objectName) {
+
+// Get Default value Functions
+template<typename T> inline T JsonFile::GetDefaultValue() {
+	return NULL;
+}
+template<> inline std::string JsonFile::GetDefaultValue() {
+	return "";
+}
+
+// Get Value Functions
+template<> inline int JsonFile::GetValue(const std::string& objectName) {
 	int returnValue = NULL;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 
@@ -155,7 +175,7 @@ template<> inline int JsonFile::Get(const std::string& objectName) {
 	}
 	return returnValue;		// Return the found value or default value if not
 }
-template<> inline float JsonFile::Get(const std::string& objectName) {
+template<> inline float JsonFile::GetValue(const std::string& objectName) {
 	float returnValue = NULL;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 
@@ -219,7 +239,7 @@ template<> inline float JsonFile::Get(const std::string& objectName) {
 	}
 	return returnValue;		// Return the found value or default value if not
 }
-template<> inline double JsonFile::Get(const std::string& objectName) {
+template<> inline double JsonFile::GetValue(const std::string& objectName) {
 	double returnValue = NULL;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 
@@ -283,7 +303,7 @@ template<> inline double JsonFile::Get(const std::string& objectName) {
 	}
 	return returnValue;		// Return the found value or default value if not
 }
-template<> inline std::string JsonFile::Get(const std::string& objectName) {
+template<> inline std::string JsonFile::GetValue(const std::string& objectName) {
 	std::string returnValue = "";
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 
@@ -347,7 +367,7 @@ template<> inline std::string JsonFile::Get(const std::string& objectName) {
 	}
 	return returnValue;		// Return the found value or default value if not
 }
-template<> inline bool JsonFile::Get(const std::string& objectName) {
+template<> inline bool JsonFile::GetValue(const std::string& objectName) {
 	bool returnValue = false;
 	std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 
@@ -412,7 +432,8 @@ template<> inline bool JsonFile::Get(const std::string& objectName) {
 	return returnValue;		// Return the found value or default value if not
 }
 
-// Setters
+
+// Set Functions
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T & value) {
 	std::cout << "JsonFile.hpp >>>> Default Template for Set, type specific ones should get called instead" << std::endl;
 	return 0;
