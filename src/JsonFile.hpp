@@ -345,7 +345,6 @@ template<> inline std::string JsonFile::Get(const std::string& objectName) {
 			std::cout << "JsonFile.hpp >>>> " << objectName << " is not a String" << std::endl;
 			return returnValue;
 		}
-
 	}
 	return returnValue;		// Return the found value or default value if not
 }
