@@ -342,7 +342,7 @@ template<> inline std::string JsonFile::Get(const std::string& objectName) {
 			returnValue = value->GetString();	// Get the value to return
 		}
 		else {
-			std::cout << "JsonFile.hpp >>>> " << objectName << " is not an String" << std::endl;
+			std::cout << "JsonFile.hpp >>>> " << objectName << " is not a String" << std::endl;
 			return returnValue;
 		}
 
