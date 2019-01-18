@@ -234,11 +234,12 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	T result;
 	if (isFileLoaded) {
 		result = TraverseJson<T>(objectName);
+		return result;
 	}
 	else {
 		result = GetDefaultValue<T>();
+		return result;
 	}
-	return result;
 }
 
 // Set Functions
