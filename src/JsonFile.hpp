@@ -214,7 +214,7 @@ template<> inline float JsonFile::Get(const std::string& objectName) {
 			returnValue = value->GetFloat();	// Get the value to return
 		}
 		else {
-			std::cout << "JsonFile.hpp >>>> " << objectName << " is not an Int" << std::endl;
+			std::cout << "JsonFile.hpp >>>> " << objectName << " is not a Float" << std::endl;
 			return returnValue;
 		}
 	}
