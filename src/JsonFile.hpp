@@ -18,7 +18,7 @@ public:
 	~JsonFile();
 
 	template <typename T> T Get(const std::string& objectName);
-	template <typename T> T GetArray(const std::string& objectName);
+	template <typename T> std::vector<T> GetArray(const std::string& objectName);
 	template <typename T> void Set(const std::string& objectName, const T& value);
 
 
@@ -237,8 +237,8 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 		return result;
 	}
 }
-template<typename T> inline T JsonFile::GetArray(const std::string& objectName) {
-	T result;
+template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string& objectName) {
+	std::vector<T> result;
 	if (isFileLoaded) {
 		return NULL;
 	}
