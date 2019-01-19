@@ -237,6 +237,9 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 		return result;
 	}
 }
+template<typename T> inline T JsonFile::GetArray(const std::string& objectName) {
+
+}
 
 // Set Functions, uses Templating
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T & value) {
