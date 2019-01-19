@@ -238,7 +238,14 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	}
 }
 template<typename T> inline T JsonFile::GetArray(const std::string& objectName) {
-
+	T result;
+	if (isFileLoaded) {
+		return NULL;
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
+		return NULL;
+	}
 }
 
 // Set Functions, uses Templating
