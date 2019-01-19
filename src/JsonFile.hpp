@@ -240,6 +240,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string& objectName) {
 	std::vector<T> result;
 	if (isFileLoaded) {
+		std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 		// Traverse the DOM to find the array we want
 
 		// Check isArray()
