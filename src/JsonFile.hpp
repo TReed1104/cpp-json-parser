@@ -18,6 +18,7 @@ public:
 	~JsonFile();
 
 	template <typename T> T Get(const std::string& objectName);
+	template <typename T> T GetArray(const std::string& objectName);
 	template <typename T> void Set(const std::string& objectName, const T& value);
 
 
