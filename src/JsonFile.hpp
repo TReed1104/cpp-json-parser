@@ -240,6 +240,15 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string& objectName) {
 	std::vector<T> result;
 	if (isFileLoaded) {
+		// Traverse the DOM to find the array we want
+
+		// Check isArray()
+
+		// iterate through .Size() getting each element
+			// check element is type T using the GetValue() overrides we created for Get<T>()
+				// If type T result.pushback();
+				// If any fail, return NULL as we've failed to get an array element
+
 		return NULL;
 	}
 	else {
