@@ -174,7 +174,6 @@ template<> inline bool JsonFile::GetValue(const rapidjson::Value& object) {
 // Get Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	if (objectName != "") {
-		T result;
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 
@@ -226,21 +225,18 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 					}
 				}
 			}
-			// Check we haven't ended up with a JSON object instead of a value
 
-			if (!value->IsObject()) {
-				result = GetValue<T>(*value);
-			}
-			else {
+			// Check we haven't ended up with a JSON object instead of a value
+			if (value->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return GetDefaultValue<T>();
 			}
-			return result;		// Return the found value or default value if not
+
+			return  GetValue<T>(*value);		// Return the found value or default value if not
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
-			result = GetDefaultValue<T>();
-			return result;
+			return GetDefaultValue<T>();
 		}
 	}
 	else {
