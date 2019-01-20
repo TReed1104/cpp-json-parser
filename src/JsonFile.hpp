@@ -173,24 +173,22 @@ template<> inline bool JsonFile::GetValue(const rapidjson::Value& object) {
 
 // Get Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline T JsonFile::Get(const std::string& objectName) {
+	// Check we've been given a key
 	if (objectName != "") {
+		// check the file is actually loaded
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-
-			rapidjson::Value* value;
-			if (jsonDocument->HasMember(splitString.front().c_str())) {
-				value = &(*jsonDocument)[splitString.front().c_str()];				// Get the first object we are looking for
-			}
-			else {
+			if (!jsonDocument->HasMember(splitString.front().c_str())) {
 				std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
 				return GetDefaultValue<T>();
 			}
+			rapidjson::Value* value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 			// Iterate through our substrings to traverse the JSON DOM
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 1; i < sizeOfSplitString; i++) {
 				if (!value->IsArray()) {
 					if (value->HasMember(splitString[i].c_str())) {
-						value = &(*value)[splitString[i].c_str()];	// Get the first object we are looking for
+						value = &(*value)[splitString[i].c_str()];
 					}
 					else {
 						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
@@ -225,13 +223,12 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 					}
 				}
 			}
-
 			// Check we haven't ended up with a JSON object instead of a value
 			if (value->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return GetDefaultValue<T>();
 			}
-
+			// If we've made it passed all the conditions, return our value of type <T>
 			return  GetValue<T>(*value);		// Return the found value or default value if not
 		}
 		else {
