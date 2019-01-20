@@ -249,6 +249,13 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 			
 			// Traverse the DOM to find the array we wan
+			if (!jsonDocument->HasMember(splitString.front().c_str())) {
+				std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+				return NULL;
+			}
+			rapidjson::Value* value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+
+
 
 			// Check isArray()
 
