@@ -242,22 +242,30 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	}
 }
 template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string& objectName) {
-	std::vector<T> result;
-	if (isFileLoaded) {
-		std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-		// Traverse the DOM to find the array we want
+	// Check we've been given a key
+	if (objectName != "") {
+		std::vector<T> result;
+		if (isFileLoaded) {
+			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+			
+			// Traverse the DOM to find the array we wan
 
-		// Check isArray()
+			// Check isArray()
 
-		// iterate through .Size() getting each element
-			// check element is type T using the GetValue() overrides we created for Get<T>()
-				// If type T result.pushback();
-				// If any fail, return NULL as we've failed to get an array element
+			// iterate through .Size() getting each element
+				// check element is type T using the GetValue() overrides we created for Get<T>()
+					// If type T result.pushback();
+					// If any fail, return NULL as we've failed to get an array element
 
-		return NULL;
+			return NULL;
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
+			return NULL;
+		}
 	}
 	else {
-		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
+		std::cout << "JsonFile.hpp >>>> No key was defined for GetArray<T>() to use for traversal" << std::endl;
 		return NULL;
 	}
 }
