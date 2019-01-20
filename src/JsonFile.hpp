@@ -248,7 +248,8 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 			
-			// Traverse the DOM to find the array we wan
+			// Traverse the DOM to find the array we want
+			// JSON spec dictates that arrays need a root key, so we still need to get the root
 			if (!jsonDocument->HasMember(splitString.front().c_str())) {
 				std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
 				return NULL;
