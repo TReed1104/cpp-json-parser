@@ -257,8 +257,12 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
 				if (i == 0) {
-				// JSON spec dictates that arrays need a root key, so we still need to get the root
-
+					// JSON spec dictates that arrays need a root key, so we still need to get the root
+					if (!jsonDocument->HasMember(splitString.front().c_str())) {
+						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+						return NULL;
+					}
+					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
 
