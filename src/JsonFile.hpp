@@ -252,19 +252,20 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 		std::vector<T> result;
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-			
+			rapidjson::Value* value = nullptr;
 			// Traverse the DOM to find the array we want
-			// JSON spec dictates that arrays need a root key, so we still need to get the root
-			if (!jsonDocument->HasMember(splitString.front().c_str())) {
-				std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
-				return NULL;
+			const size_t sizeOfSplitString = splitString.size();
+			for (size_t i = 0; i < sizeOfSplitString; i++) {
+				if (i == 0) {
+				// JSON spec dictates that arrays need a root key, so we still need to get the root
+
+				}
+				else {
+
+				}
 			}
-			rapidjson::Value* value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
-
-
 
 			// Check isArray()
-
 			// iterate through .Size() getting each element
 				// check element is type T using the GetValue() overrides we created for Get<T>()
 					// If type T result.pushback();
