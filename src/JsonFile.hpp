@@ -303,6 +303,11 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 					}
 				}
 			}
+			// Check we haven't ended up with a JSON object instead of a value
+			if (value->IsObject()) {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
+				return NULL;
+			}
 
 			// Check isArray()
 			// iterate through .Size() getting each element
