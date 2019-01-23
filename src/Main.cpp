@@ -12,7 +12,7 @@ int main() {
 	bool getBoolTest = testFile.Get<bool>("engine.vsync");
 
 	JsonFile arrayTextFile = JsonFile("content/test_level.json");
-	int tileReferenceTest = arrayTextFile.Get<int>("level.tile grid.156");
+	std::vector<int> levelData = arrayTextFile.GetArray<int>("level.tile grid");
 	
 
 	// Close the test program
