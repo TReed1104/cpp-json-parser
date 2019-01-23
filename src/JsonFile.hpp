@@ -275,7 +275,31 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 						}
 					}
 					else {
-
+						// Point to the object/key/array at the indicated index in the array
+						int arraySize = value->Size();
+						int indexOfValue = 0;
+						// try and convert the substring to an int, if not return default
+						try {
+							indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+						}
+						catch (...) {
+							std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
+							return NULL;
+						}
+						// Check the value is accessible in the bounds of the array
+						if (arraySize > 0) {
+							if (arraySize > indexOfValue) {
+								value = &(*value)[indexOfValue];
+							}
+							else {
+								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
+								return NULL;
+							}
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
+							return NULL;
+						}
 					}
 				}
 			}
