@@ -266,7 +266,13 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 				}
 				else {
 					if (!value->IsArray()) {
-
+						if (value->HasMember(splitString[i].c_str())) {
+							value = &(*value)[splitString[i].c_str()];
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+							return NULL;
+						}
 					}
 					else {
 
