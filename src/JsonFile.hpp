@@ -260,7 +260,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 					// JSON spec dictates that arrays need a root key, so we still need to get the root
 					if (!jsonDocument->HasMember(splitString.front().c_str())) {
 						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
-						return NULL;
+						return std::vector<T>();
 					}
 					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
@@ -271,7 +271,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 						}
 						else {
 							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
-							return NULL;
+							return std::vector<T>();
 						}
 					}
 					else {
@@ -284,7 +284,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 						}
 						catch (...) {
 							std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
-							return NULL;
+							return result;
 						}
 						// Check the value is accessible in the bounds of the array
 						if (arraySize > 0) {
@@ -293,12 +293,12 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 							}
 							else {
 								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
-								return NULL;
+								return std::vector<T>();
 							}
 						}
 						else {
 							std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
-							return NULL;
+							return std::vector<T>();
 						}
 					}
 				}
@@ -306,7 +306,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 			// Check we haven't ended up with a JSON object instead of a value
 			if (value->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
-				return NULL;
+				return std::vector<T>();
 			}
 
 			// Check isArray()
@@ -315,16 +315,16 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 					// If type T result.pushback();
 					// If any fail, return NULL as we've failed to get an array element
 
-			return NULL;
+			return result;
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
-			return NULL;
+			return std::vector<T>();
 		}
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> No key was defined for GetArray<T>() to use for traversal" << std::endl;
-		return NULL;
+		return std::vector<T>();
 	}
 }
 
