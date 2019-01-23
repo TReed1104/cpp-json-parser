@@ -265,7 +265,12 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
+					if (!value->IsArray()) {
 
+					}
+					else {
+
+					}
 				}
 			}
 
