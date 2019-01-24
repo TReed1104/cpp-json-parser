@@ -234,7 +234,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 				return GetDefaultValue<T>();
 			}
 			// If we've made it passed all the conditions, return our value of type <T>
-			return  GetValue<T>(*value);		// Return the found value or default value if not
+			return GetValue<T>(*value);		// Return the found value or default value if not
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
@@ -310,10 +310,20 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 			}
 
 			// Check isArray()
-			// iterate through .Size() getting each element
-				// check element is type T using the GetValue() overrides we created for Get<T>()
-					// If type T result.pushback();
-					// If any fail, return NULL as we've failed to get an array element
+			if (value->IsArray()) {
+				// iterate through the array getting each element
+				for (const auto& item : value->GetArray()) {
+					if (item.IsInt()) {
+						// If type T result.pushback();
+						result.push_back(item.GetInt());
+					}
+					else {
+						// If any fail, return a blank vector as the element is the wrong type
+						std::cout << "JsonFile.hpp >>>> " << objectName << " element at index is the wrong type" << std::endl;
+						return std::vector<T>();
+					}
+				}
+			}
 
 			return result;
 		}
