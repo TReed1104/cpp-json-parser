@@ -309,12 +309,15 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 				return std::vector<T>();
 			}
 
-			// Check isArray()
-			if (value->IsArray()) {
-				// iterate through the array getting each element
-				for (const auto& item : value->GetArray()) {
-					result.push_back(GetValue<T>(item));
-				}
+			// Check we haven't ended up with a key that isn't an array
+			if (!value->IsArray()) {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " is not an array" << std::endl;
+				return std::vector<T>();
+			}
+
+			// iterate through the array getting each element
+			for (const auto& item : value->GetArray()) {
+				result.push_back(GetValue<T>(item));
 			}
 
 			return result;
