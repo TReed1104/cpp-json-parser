@@ -313,8 +313,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 			if (value->IsArray()) {
 				// iterate through the array getting each element
 				for (const auto& item : value->GetArray()) {
-					int element = GetValue<T>(item);
-					result.push_back(element);
+					result.push_back(GetValue<T>(item));
 				}
 			}
 
