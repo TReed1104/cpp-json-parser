@@ -1,0 +1,26 @@
+{
+    "value test": {
+        "int": 51,
+        "float": 8.0,
+        "double":  6.2,
+        "string": "this is a test string",
+        "boolean": false
+    },
+    "array test": {
+        "int array": [
+            1, 2, 3, 4, 5, 10, 9, 8, 7, 6
+        ],
+        "float array": [
+            1.1, 2.2, 3.3, 4.4
+        ],
+        "double array": [
+            5.5, 4.4, 3.3, 2.2, 1.1, 6.6
+        ],
+        "string array": [
+            "one", "two", "three", "four", "five"
+        ],
+        "boolean array": [
+            true, false, false, true, true
+        ]
+    }
+}
