@@ -11,6 +11,13 @@ int main() {
 	std::string getStringTest = testFileForGets.Get<std::string>("value test.string");
 	bool getBoolTest = testFileForGets.Get<bool>("value test.boolean");
 
+	// Get<T>() tests for accessing arrays
+	int getIntFromArrayTest = testFileForGets.Get<int>("array test.int array.2");
+	float getFloatFromArrayTest = testFileForGets.Get<float>("array test.float array.1");
+	double getDoubleFromArrayTest = testFileForGets.Get<double>("array test.double array.4");
+	std::string getStringFromArrayTest = testFileForGets.Get<std::string>("array test.string array.3");
+	bool getBoolFromArrayTest = testFileForGets.Get<bool>("array test.boolean array.2");
+
 	// GetArray<T>() Tests
 	std::vector<int> getIntArrayTest = testFileForGets.GetArray<int>("array test.int array");
 	std::vector<float> getFloatArrayTest = testFileForGets.GetArray<float>("array test.float array");
@@ -21,7 +28,6 @@ int main() {
 	// Load the File
 	JsonFile testFileForSets = JsonFile("content/set_test.json");
 	testFileForSets.Set<int>("value test.int", 99);
-
 
 	// Close the program
 	return 0;
