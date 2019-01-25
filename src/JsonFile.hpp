@@ -344,7 +344,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 }
 
 // Set value functions, uses Templating overrides
-template<typename T> inline void JsonFile::SetValue(const rapidjson::Value & object, const T & value) {
+template<typename T> inline void JsonFile::SetValue(const rapidjson::Value & object, const T& value) {
 	return;
 }
 template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const int& value) {
