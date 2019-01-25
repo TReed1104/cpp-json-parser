@@ -336,7 +336,10 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 
 // Set Functions, uses Templating
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& value) {
+	// Check we've been given a key
+	if (objectName != "") {
 
+	}
 }
 template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const T& value) {
 
