@@ -27,7 +27,11 @@ int main() {
 	
 	// Load the File
 	JsonFile testFileForSets = JsonFile("content/set_test.json");
-	testFileForSets.Set<int>("value test.int", 99);
+	testFileForSets.Set<int>("value test.int", 111);
+	testFileForSets.Set<float>("value test.float", 101.89f);
+	testFileForSets.Set<double>("value test.double", 901.982);
+	testFileForSets.Set<std::string>("value test.string", "new value");
+	testFileForSets.Set<bool>("value test.boolean", true);
 
 	// Close the program
 	return 0;
