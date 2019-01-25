@@ -353,7 +353,18 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
+					if (!value->IsArray()) {
+						if (value->HasMember(splitString[i].c_str())) {
+							value = &(*value)[splitString[i].c_str()];
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+							return;
+						}
+					}
+					else {
 
+					}
 				}
 			}
 		}
