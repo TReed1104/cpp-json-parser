@@ -348,6 +348,12 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 
 			}
 		}
+		else {
+
+		}
+	}
+	else {
+
 	}
 }
 template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const T& value) {
