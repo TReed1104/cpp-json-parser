@@ -345,7 +345,16 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 			// Iterate through our substrings to traverse the JSON DOM
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
+				if (i == 0) {
+					if (!jsonDocument->HasMember(splitString.front().c_str())) {
+						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+						return;
+					}
+					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+				}
+				else {
 
+				}
 			}
 		}
 		else {
