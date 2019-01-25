@@ -2,7 +2,7 @@
 
 int main() {
 	// Load the File
-	JsonFile testFile = JsonFile("content/test.json");
+	JsonFile testFile = JsonFile("content/get_test.json");
 	
 	// Get<T>() Tests
 	int getIntTest = testFile.Get<int>("value test.int");
