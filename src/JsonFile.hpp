@@ -20,6 +20,7 @@ public:
 	template <typename T> T Get(const std::string& objectName);
 	template <typename T> std::vector<T> GetArray(const std::string& objectName);
 	template <typename T> void Set(const std::string& objectName, const T& value);
+	template <typename T> void SetArray(const std::string& objectName, const T& value);
 
 
 private:
@@ -334,23 +335,10 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 }
 
 // Set Functions, uses Templating
-template<typename T> inline void JsonFile::Set(const std::string& objectName, const T & value) {
-	std::cout << "JsonFile.hpp >>>> Default Template for Set, type specific ones should get called instead" << std::endl;
-	return 0;
-}
-template<> inline void JsonFile::Set(const std::string& objectName, const int& value) {
+template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& value) {
 
 }
-template<> inline void JsonFile::Set(const std::string& objectName, const float& value) {
-
-}
-template<> inline void JsonFile::Set(const std::string& objectName, const double& value) {
-
-}
-template<> inline void JsonFile::Set(const std::string& objectName, const std::string& value) {
-
-}
-template<> inline void JsonFile::Set(const std::string& objectName, const bool& value) {
+template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const T& value) {
 
 }
 #endif
