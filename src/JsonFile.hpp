@@ -398,7 +398,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 			}
 			
 			// We've reached our depth in the DOM, amend the value
-			
+			return;	// For break pointing
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
@@ -478,7 +478,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 			}
 
 			// We've reached our depth in the DOM, amend the value
-
+			return;	// For break pointing
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
