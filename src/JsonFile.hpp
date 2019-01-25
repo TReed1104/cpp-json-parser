@@ -21,11 +21,11 @@ public:
 	template <typename T> T Get(const std::string& objectName);
 	template <typename T> std::vector<T> GetArray(const std::string& objectName);
 	// Sets
-	template <typename T> void Set(const std::string& objectName, const T& value);
-	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& valueArray);
+	template <typename T> void Set(const std::string& objectName, const T& inputValue);
+	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& inputValueArray);
 	// Appends
-	template <typename T> void Add(const std::string& objectName, const T& value);
-	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& valueArray);
+	template <typename T> void Add(const std::string& objectName, const T& inputValue);
+	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& inputValueArray);
 	// Removes
 	template <typename T> void Remove(const std::string& objectName);
 	template <typename T> void RemoveArray(const std::string& objectName);
@@ -39,8 +39,8 @@ private:
 
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 	template <typename T> T GetDefaultValue();
-	template <typename T> T GetValue(const rapidjson::Value& object);
-	template <typename T> void SetValue(const rapidjson::Value& object, const T& value);
+	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
+	template <typename T> void SetValue(const rapidjson::Value& jsonValue, const T& inputValue);
 
 };
 
@@ -131,10 +131,10 @@ template<> inline bool JsonFile::GetDefaultValue() {
 }
 
 // Get value functions, uses Templating overrides
-template<typename T> inline T JsonFile::GetValue(const rapidjson::Value& object) {
+template<typename T> inline T JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	return GetDefaultValue<T>();
 }
-template<> inline int JsonFile::GetValue(const rapidjson::Value& object) {
+template<> inline int JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	int result;
 	if (object.IsInt()) {
 		result = object.GetInt();	// Get the value to return
@@ -145,7 +145,7 @@ template<> inline int JsonFile::GetValue(const rapidjson::Value& object) {
 		return GetDefaultValue<int>();
 	}
 }
-template<> inline float JsonFile::GetValue(const rapidjson::Value& object) {
+template<> inline float JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	float result;
 	if (object.IsFloat()) {
 		result = object.GetFloat();	// Get the value to return
@@ -156,7 +156,7 @@ template<> inline float JsonFile::GetValue(const rapidjson::Value& object) {
 		return GetDefaultValue<float>();
 	}
 }
-template<> inline double JsonFile::GetValue(const rapidjson::Value& object) {
+template<> inline double JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	double result;
 	if (object.IsDouble()) {
 		result = object.GetDouble();	// Get the value to return
@@ -167,7 +167,7 @@ template<> inline double JsonFile::GetValue(const rapidjson::Value& object) {
 		return GetDefaultValue<double>();
 	}
 }
-template<> inline std::string JsonFile::GetValue(const rapidjson::Value& object) {
+template<> inline std::string JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	std::string result;
 	if (object.IsString()) {
 		result = object.GetString();	// Get the value to return
@@ -178,7 +178,7 @@ template<> inline std::string JsonFile::GetValue(const rapidjson::Value& object)
 		return GetDefaultValue<std::string>();
 	}
 }
-template<> inline bool JsonFile::GetValue(const rapidjson::Value& object) {
+template<> inline bool JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	bool result;
 	if (object.IsBool()) {
 		result = object.GetBool();	// Get the value to return
@@ -353,33 +353,33 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 }
 
 // Set value functions, uses Templating overrides
-template<typename T> inline void JsonFile::SetValue(const rapidjson::Value & object, const T& value) {
+template<typename T> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const T& inputValue) {
 	return;
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const int& value) {
+template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const int& inputValue) {
 	return;
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const float& value) {
+template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const float& inputValue) {
 	return;
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const double& value) {
+template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const double& inputValue) {
 	return;
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const std::string& value) {
+template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const std::string& inputValue) {
 	return;
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const bool& value) {
+template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const bool& inputValue) {
 	return;
 }
 
 // Set Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
-template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& value) {
+template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& inputValue) {
 	// Check we've been given a key
 	if (objectName != "") {
 		// check the file is actually loaded
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-			rapidjson::Value* value = nullptr;
+			rapidjson::Value* jsonValue = nullptr;
 			// Iterate through our substrings to traverse the JSON DOM
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
@@ -388,12 +388,12 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
 						return;
 					}
-					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+					jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
-					if (!value->IsArray()) {
-						if (value->HasMember(splitString[i].c_str())) {
-							value = &(*value)[splitString[i].c_str()];
+					if (!jsonValue->IsArray()) {
+						if (jsonValue->HasMember(splitString[i].c_str())) {
+							jsonValue = &(*jsonValue)[splitString[i].c_str()];
 						}
 						else {
 							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
@@ -402,7 +402,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 					}
 					else {
 						// Point to the object/key/array at the indicated index in the array
-						int arraySize = value->Size();
+						int arraySize = jsonValue->Size();
 						int indexOfValue = 0;
 						// try and convert the substring to an int, if not return default
 						try {
@@ -415,7 +415,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 						// Check the value is accessible in the bounds of the array
 						if (arraySize > 0) {
 							if (arraySize > indexOfValue) {
-								value = &(*value)[indexOfValue];
+								jsonValue = &(*jsonValue)[indexOfValue];
 							}
 							else {
 								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
@@ -430,12 +430,13 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 				}
 			}
 			// Check we haven't ended up with a JSON object instead of a value
-			if (value->IsObject()) {
+			if (jsonValue->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return;
 			}
 			
 			// We've reached our depth in the DOM, amend the value
+			SetValue(jsonValue, inputValue);
 			return;	// For break pointing
 		}
 		else {
@@ -448,7 +449,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 		return;
 	}
 }
-template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const std::vector<T>& valueArray) {
+template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const std::vector<T>& inputValueArray) {
 	// Check we've been given a key
 	if (objectName != "") {
 		// check the file is actually loaded
