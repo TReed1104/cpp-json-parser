@@ -461,8 +461,13 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 			}
 
 			// We've reached our depth in the DOM, amend the value
-			SetValue<T>(*jsonValue, inputValue);
-			return;	// For break pointing
+			if (SetValue<T>(*jsonValue, inputValue)) {
+				// If we've successfully set the value, save the doc
+				Save();
+			}
+			else {
+				return;
+			}
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
