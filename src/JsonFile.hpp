@@ -569,8 +569,17 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 				return;
 			}
 
-			// We've reached our depth in the DOM, amend the value
-			return;	// For break pointing
+			// Clear the array
+			jsonValue->SetArray();
+			// iterate through the passed vector and push each element to the json document
+			for (const T& item : inputValueArray) {
+				jsonValue->PushBack(item, jsonDocument->GetAllocator());
+			}
+
+			// If we've successfully set the value, save the doc
+			if (!Save()) {
+				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+			}
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
