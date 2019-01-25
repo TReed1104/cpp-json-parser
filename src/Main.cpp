@@ -38,7 +38,7 @@ int main() {
 	for (size_t i = 0; i < 10; i++) {
 		testIntVector.push_back(i);
 	}
-	testFileForSets.SetArray<int>("array test.string array", testIntVector);
+	testFileForSets.SetArray<int>("array test.int array", testIntVector);
 
 	// Close the program
 	return 0;
