@@ -426,7 +426,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 			}
 			
 			// We've reached our depth in the DOM, amend the value
-			SetValue(jsonValue, inputValue);
+			SetValue<T>(*jsonValue, inputValue);
 			return;	// For break pointing
 		}
 		else {
