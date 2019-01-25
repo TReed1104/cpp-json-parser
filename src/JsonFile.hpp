@@ -484,7 +484,9 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 			// We've reached our depth in the DOM, amend the value
 			if (SetValue<T>(*jsonValue, inputValue)) {
 				// If we've successfully set the value, save the doc
-				Save();
+				if (!Save()) {
+					std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				}
 			}
 			else {
 				return;
