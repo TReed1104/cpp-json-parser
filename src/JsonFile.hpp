@@ -338,7 +338,10 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& value) {
 	// Check we've been given a key
 	if (objectName != "") {
+		// check the file is actually loaded
+		if (isFileLoaded) {
 
+		}
 	}
 }
 template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const T& value) {
