@@ -399,7 +399,7 @@ template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const dou
 }
 template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const std::string& inputValue) {
 	if (jsonValue.IsString()) {
-		jsonValue.SetString(inputValue.c_str(), inputValue.length(), jsonDocument->GetAllocator());
+		jsonValue.SetString(inputValue.c_str(), (rapidjson::SizeType)inputValue.length(), jsonDocument->GetAllocator());
 		return true;
 	}
 	else {
