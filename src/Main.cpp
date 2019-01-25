@@ -33,6 +33,13 @@ int main() {
 	testFileForSets.Set<std::string>("value test.string", "new value");
 	testFileForSets.Set<bool>("value test.boolean", true);
 
+	std::vector<int> testIntVector;
+
+	for (size_t i = 0; i < 10; i++) {
+		testIntVector.push_back(i);
+	}
+	testFileForSets.SetArray<int>("array test.string array", testIntVector);
+
 	// Close the program
 	return 0;
 }
