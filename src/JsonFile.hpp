@@ -135,10 +135,8 @@ template<typename T> inline T JsonFile::GetValue(const rapidjson::Value& jsonVal
 	return GetDefaultValue<T>();
 }
 template<> inline int JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	int result;
-	if (object.IsInt()) {
-		result = object.GetInt();	// Get the value to return
-		return result;
+	if (jsonValue.IsInt()) {
+		return jsonValue.GetInt();
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not an Int" << std::endl;
@@ -146,10 +144,8 @@ template<> inline int JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	}
 }
 template<> inline float JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	float result;
-	if (object.IsFloat()) {
-		result = object.GetFloat();	// Get the value to return
-		return result;
+	if (jsonValue.IsFloat()) {
+		return jsonValue.GetFloat();
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a float" << std::endl;
@@ -157,10 +153,8 @@ template<> inline float JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	}
 }
 template<> inline double JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	double result;
-	if (object.IsDouble()) {
-		result = object.GetDouble();	// Get the value to return
-		return result;
+	if (jsonValue.IsDouble()) {
+		return jsonValue.GetDouble();
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a double" << std::endl;
@@ -168,10 +162,8 @@ template<> inline double JsonFile::GetValue(const rapidjson::Value& jsonValue) {
 	}
 }
 template<> inline std::string JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	std::string result;
-	if (object.IsString()) {
-		result = object.GetString();	// Get the value to return
-		return result;
+	if (jsonValue.IsString()) {
+		return jsonValue.GetString();
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a std::string" << std::endl;
@@ -179,10 +171,8 @@ template<> inline std::string JsonFile::GetValue(const rapidjson::Value& jsonVal
 	}
 }
 template<> inline bool JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	bool result;
-	if (object.IsBool()) {
-		result = object.GetBool();	// Get the value to return
-		return result;
+	if (jsonValue.IsBool()) {
+		return jsonValue.GetBool();
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a boolean" << std::endl;
@@ -197,7 +187,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 		// check the file is actually loaded
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-			rapidjson::Value* value = nullptr;
+			rapidjson::Value* jsonValue = nullptr;
 			// Iterate through our substrings to traverse the JSON DOM
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
@@ -206,12 +196,12 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
 						return GetDefaultValue<T>();
 					}
-					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+					jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
-					if (!value->IsArray()) {
-						if (value->HasMember(splitString[i].c_str())) {
-							value = &(*value)[splitString[i].c_str()];
+					if (!jsonValue->IsArray()) {
+						if (jsonValue->HasMember(splitString[i].c_str())) {
+							jsonValue = &(*jsonValue)[splitString[i].c_str()];
 						}
 						else {
 							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
@@ -220,7 +210,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 					}
 					else {
 						// Point to the object/key/array at the indicated index in the array
-						int arraySize = value->Size();
+						int arraySize = jsonValue->Size();
 						int indexOfValue = 0;
 						// try and convert the substring to an int, if not return default
 						try {
@@ -233,7 +223,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 						// Check the value is accessible in the bounds of the array
 						if (arraySize > 0) {
 							if (arraySize > indexOfValue) {
-								value = &(*value)[indexOfValue];
+								jsonValue = &(*jsonValue)[indexOfValue];
 							}
 							else {
 								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
@@ -248,12 +238,12 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 				}
 			}
 			// Check we haven't ended up with a JSON object instead of a value
-			if (value->IsObject()) {
+			if (jsonValue->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return GetDefaultValue<T>();
 			}
 			// If we've made it passed all the conditions, return our value of type <T>
-			return GetValue<T>(*value);		// Return the found value or default value if not
+			return GetValue<T>(*jsonValue);		// Return the found value or default value if not
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
@@ -271,7 +261,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 		std::vector<T> result;
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-			rapidjson::Value* value = nullptr;
+			rapidjson::Value* jsonValue = nullptr;
 			// Traverse the DOM to find the array we want
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
@@ -281,12 +271,12 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
 						return std::vector<T>();
 					}
-					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+					jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
-					if (!value->IsArray()) {
-						if (value->HasMember(splitString[i].c_str())) {
-							value = &(*value)[splitString[i].c_str()];
+					if (!jsonValue->IsArray()) {
+						if (jsonValue->HasMember(splitString[i].c_str())) {
+							jsonValue = &(*jsonValue)[splitString[i].c_str()];
 						}
 						else {
 							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
@@ -295,7 +285,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 					}
 					else {
 						// Point to the object/key/array at the indicated index in the array
-						int arraySize = value->Size();
+						int arraySize = jsonValue->Size();
 						int indexOfValue = 0;
 						// try and convert the substring to an int, if not return default
 						try {
@@ -308,7 +298,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 						// Check the value is accessible in the bounds of the array
 						if (arraySize > 0) {
 							if (arraySize > indexOfValue) {
-								value = &(*value)[indexOfValue];
+								jsonValue = &(*jsonValue)[indexOfValue];
 							}
 							else {
 								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
@@ -323,19 +313,19 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 				}
 			}
 			// Check we haven't ended up with a JSON object instead of a value
-			if (value->IsObject()) {
+			if (jsonValue->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return std::vector<T>();
 			}
 
 			// Check we haven't ended up with a key that isn't an array
-			if (!value->IsArray()) {
+			if (!jsonValue->IsArray()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is not an array" << std::endl;
 				return std::vector<T>();
 			}
 
 			// iterate through the array getting each element
-			for (const auto& item : value->GetArray()) {
+			for (const auto& item : jsonValue->GetArray()) {
 				result.push_back(GetValue<T>(item));
 			}
 
@@ -455,7 +445,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 		// check the file is actually loaded
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
-			rapidjson::Value* value = nullptr;
+			rapidjson::Value* jsonValue = nullptr;
 			// Iterate through our substrings to traverse the JSON DOM
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
@@ -464,12 +454,12 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
 						return;
 					}
-					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+					jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
-					if (!value->IsArray()) {
-						if (value->HasMember(splitString[i].c_str())) {
-							value = &(*value)[splitString[i].c_str()];
+					if (!jsonValue->IsArray()) {
+						if (jsonValue->HasMember(splitString[i].c_str())) {
+							jsonValue = &(*jsonValue)[splitString[i].c_str()];
 						}
 						else {
 							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
@@ -478,7 +468,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 					}
 					else {
 						// Point to the object/key/array at the indicated index in the array
-						int arraySize = value->Size();
+						int arraySize = jsonValue->Size();
 						int indexOfValue = 0;
 						// try and convert the substring to an int, if not return default
 						try {
@@ -491,7 +481,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 						// Check the value is accessible in the bounds of the array
 						if (arraySize > 0) {
 							if (arraySize > indexOfValue) {
-								value = &(*value)[indexOfValue];
+								jsonValue = &(*jsonValue)[indexOfValue];
 							}
 							else {
 								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
@@ -506,12 +496,12 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 				}
 			}
 			// Check we haven't ended up with a JSON object instead of a value
-			if (value->IsObject()) {
+			if (jsonValue->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return;
 			}
 			// Check we haven't ended up with a key that isn't an array
-			if (!value->IsArray()) {
+			if (!jsonValue->IsArray()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is not an array" << std::endl;
 				return;
 			}
