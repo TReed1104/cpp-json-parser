@@ -18,6 +18,11 @@ int main() {
 	std::vector<std::string> getStringArrayTest = testFileForGets.GetArray<std::string>("array test.string array");
 	std::vector<bool> getBoolArrayTest = testFileForGets.GetArray<bool>("array test.boolean array");
 	
+	// Load the File
+	JsonFile testFileForSets = JsonFile("content/set_test.json");
+
+
+
 	// Close the program
 	return 0;
 }
