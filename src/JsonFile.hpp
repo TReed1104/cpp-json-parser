@@ -26,6 +26,9 @@ public:
 	// Appends
 	template <typename T> void Add(const std::string& objectName, const T& value);
 	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& valueArray);
+	// Removes
+	template <typename T> void Remove(const std::string& objectName);
+	template <typename T> void RemoveArray(const std::string& objectName);
 
 
 private:
