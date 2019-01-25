@@ -30,13 +30,13 @@ public:
 	template <typename T> void Remove(const std::string& objectName);
 	template <typename T> void RemoveArray(const std::string& objectName);
 
+	bool Load(const std::string& fileName);
 	bool Save(void);
 
 
 private:
-	rapidjson::Document* jsonDocument;
+	rapidjson::Document* jsonDocument = nullptr;
 
-	bool Load(const std::string& fileName);
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& object);
@@ -46,14 +46,7 @@ private:
 
 // Constructors & Deconstructors
 JsonFile::JsonFile(const std::string& fileName) {
-	this->fileName = fileName;
-	if (fileName != "NOT GIVEN") {
-		isFileLoaded = Load(fileName);
-	}
-	else {
-		isFileLoaded = false;
-		std::cout << "JsonFile.hpp >>>> File name was not supplied, no file was loaded" << std::endl;
-	}
+	Load(fileName);
 }
 JsonFile::~JsonFile() {
 	delete jsonDocument;
@@ -62,19 +55,32 @@ JsonFile::~JsonFile() {
 // Loading functions
 bool JsonFile::Load(const std::string& fileName) {
 	this->fileName = fileName;
-	std::ifstream fileStream(fileName);
-	rapidjson::IStreamWrapper inputStream(fileStream);
-	jsonDocument = new rapidjson::Document();
-	jsonDocument->ParseStream(inputStream);
+	if (fileName != "NOT GIVEN") {
+		// Check if we've already loaded the file
+		if (jsonDocument != nullptr) {
+			delete jsonDocument;
+		}
+		std::ifstream fileStream(fileName);
+		rapidjson::IStreamWrapper inputStream(fileStream);
+		jsonDocument = new rapidjson::Document();
+		jsonDocument->ParseStream(inputStream);
 
-	if (jsonDocument->HasParseError()) {
-		std::cout << "JsonFile.hpp >>>> File: " << fileName << " was not loaded" << std::endl;
-		std::cout << "JsonFile.hpp >>>> Parser Errors: " << rapidjson::GetParseError_En(jsonDocument->GetParseError()) << std::endl;
-		return false;
+		if (jsonDocument->HasParseError()) {
+			std::cout << "JsonFile.hpp >>>> File: " << fileName << " was not loaded" << std::endl;
+			std::cout << "JsonFile.hpp >>>> Parser Errors: " << rapidjson::GetParseError_En(jsonDocument->GetParseError()) << std::endl;
+			isFileLoaded = false;
+			return false;
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> File: " << fileName << " was loaded successfully" << std::endl;
+			isFileLoaded = true;
+			return true;
+		}
 	}
 	else {
-		std::cout << "JsonFile.hpp >>>> File: " << fileName << " was loaded successfully" << std::endl;
-		return true;
+		std::cout << "JsonFile.hpp >>>> File name was not supplied, no file was loaded" << std::endl;
+		isFileLoaded = false;
+		return false;
 	}
 }
 
