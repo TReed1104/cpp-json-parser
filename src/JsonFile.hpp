@@ -347,6 +347,21 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 template<typename T> inline void JsonFile::SetValue(const rapidjson::Value & object, const T & value) {
 	return;
 }
+template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const int& value) {
+	return;
+}
+template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const float& value) {
+	return;
+}
+template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const double& value) {
+	return;
+}
+template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const std::string& value) {
+	return;
+}
+template<> inline void JsonFile::SetValue(const rapidjson::Value & object, const bool& value) {
+	return;
+}
 
 // Set Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& value) {
