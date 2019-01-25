@@ -40,7 +40,7 @@ private:
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
-	template <typename T> void SetValue(const rapidjson::Value& jsonValue, const T& inputValue);
+	template <typename T> void SetValue(rapidjson::Value& jsonValue, const T& inputValue);
 
 };
 
@@ -343,23 +343,53 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 }
 
 // Set value functions, uses Templating overrides
-template<typename T> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const T& inputValue) {
+template<typename T> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const T& inputValue) {
 	return;
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const int& inputValue) {
-	return;
+template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const int& inputValue) {
+	if (jsonValue.IsInt()) {
+		jsonValue.SetInt(inputValue);
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not an Int" << std::endl;
+		return;
+	}
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const float& inputValue) {
-	return;
+template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const float& inputValue) {
+	if (jsonValue.IsFloat()) {
+		jsonValue.SetFloat(inputValue);
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a Float" << std::endl;
+		return;
+	}
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const double& inputValue) {
-	return;
+template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const double& inputValue) {
+	if (jsonValue.IsDouble()) {
+		jsonValue.SetDouble(inputValue);
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a Double" << std::endl;
+		return;
+	}
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const std::string& inputValue) {
-	return;
+template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const std::string& inputValue) {
+	if (jsonValue.IsString()) {
+		jsonValue.SetString(inputValue.c_str(), inputValue.size());
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a String" << std::endl;
+		return;
+	}
 }
-template<> inline void JsonFile::SetValue(const rapidjson::Value& jsonValue, const bool& inputValue) {
-	return;
+template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const bool& inputValue) {
+	if (jsonValue.IsBool()) {
+		jsonValue.SetBool(inputValue);
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a Boolean" << std::endl;
+		return;
+	}
 }
 
 // Set Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
