@@ -30,6 +30,8 @@ public:
 	template <typename T> void Remove(const std::string& objectName);
 	template <typename T> void RemoveArray(const std::string& objectName);
 
+	bool Save(void);
+
 
 private:
 	rapidjson::Document* jsonDocument;
