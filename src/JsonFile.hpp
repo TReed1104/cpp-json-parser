@@ -342,6 +342,11 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 		if (isFileLoaded) {
 			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 			rapidjson::Value* value = nullptr;
+			// Iterate through our substrings to traverse the JSON DOM
+			const size_t sizeOfSplitString = splitString.size();
+			for (size_t i = 0; i < sizeOfSplitString; i++) {
+
+			}
 		}
 	}
 }
