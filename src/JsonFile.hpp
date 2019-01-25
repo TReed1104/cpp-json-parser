@@ -359,6 +359,25 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 	}
 }
 template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const T& value) {
+	if (objectName != "") {
+		// check the file is actually loaded
+		if (isFileLoaded) {
+			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+			rapidjson::Value* value = nullptr;
+			// Iterate through our substrings to traverse the JSON DOM
+			const size_t sizeOfSplitString = splitString.size();
+			for (size_t i = 0; i < sizeOfSplitString; i++) {
 
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
+			return;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> No key was defined for Get<T>() to use for traversal" << std::endl;
+		return;
+	}
 }
 #endif
