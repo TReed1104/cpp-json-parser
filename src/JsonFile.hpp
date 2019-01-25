@@ -7,6 +7,8 @@
 #include <vector>
 #include "rapidjson/document.h"
 #include <rapidjson/istreamwrapper.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/error/en.h>
 
 class JsonFile {
@@ -84,7 +86,23 @@ bool JsonFile::Load(const std::string& fileName) {
 	}
 }
 bool JsonFile::Save(void) {
-	return false;
+	if (isFileLoaded) {
+		std::ofstream outFileStream(fileName);
+		if (!outFileStream.is_open()) {
+			std::cout << "JsonFile.hpp >>>> File: " << fileName << " could not be opened for writing" << std::endl;
+			return false;
+		}
+		else {
+			rapidjson::OStreamWrapper outputStreamWrapper(outFileStream);
+			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> fileWriter(outputStreamWrapper);
+			jsonDocument->Accept(fileWriter);
+			return true;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Save()" << std::endl;
+		return false;
+	}
 }
 
 // Splits a string using the given splitToken, E.g. ""The.Cat.Sat.On.The.Mat" splits with token '.' into Vector[6] = {The, Cat, Sat, On, The, Mat};
