@@ -20,7 +20,7 @@ int main() {
 	
 	// Load the File
 	JsonFile testFileForSets = JsonFile("content/set_test.json");
-
+	testFileForSets.Set<int>("value test.int", 99);
 
 
 	// Close the program
