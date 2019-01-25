@@ -83,6 +83,9 @@ bool JsonFile::Load(const std::string& fileName) {
 		return false;
 	}
 }
+bool JsonFile::Save(void) {
+	return false;
+}
 
 // Splits a string using the given splitToken, E.g. ""The.Cat.Sat.On.The.Mat" splits with token '.' into Vector[6] = {The, Cat, Sat, On, The, Mat};
 std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit, const char& splitToken) {
