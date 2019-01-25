@@ -20,7 +20,7 @@ public:
 	template <typename T> T Get(const std::string& objectName);
 	template <typename T> std::vector<T> GetArray(const std::string& objectName);
 	template <typename T> void Set(const std::string& objectName, const T& value);
-	template <typename T> void SetArray(const std::string& objectName, const T& value);
+	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& valueArray);
 
 
 private:
@@ -358,7 +358,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 		return;
 	}
 }
-template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const T& value) {
+template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const std::vector<T>& valueArray) {
 	if (objectName != "") {
 		// check the file is actually loaded
 		if (isFileLoaded) {
