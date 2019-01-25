@@ -17,8 +17,10 @@ public:
 	JsonFile(const std::string& fileName = "NOT GIVEN");
 	~JsonFile();
 
+	// Gets
 	template <typename T> T Get(const std::string& objectName);
 	template <typename T> std::vector<T> GetArray(const std::string& objectName);
+	// Sets
 	template <typename T> void Set(const std::string& objectName, const T& value);
 	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& valueArray);
 
@@ -30,6 +32,7 @@ private:
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& object);
+	template <typename T> T SetValue(const rapidjson::Value& object, const T& value);
 
 };
 
