@@ -391,6 +391,13 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 					}
 				}
 			}
+			if (value->IsObject()) {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
+				return;
+			}
+			
+
+			
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
