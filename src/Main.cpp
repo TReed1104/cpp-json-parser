@@ -2,19 +2,22 @@
 
 int main() {
 	// Load the File
-	JsonFile testFile = JsonFile("content/engine.json");
-
-	// Get Tests
-	int getIntTest = testFile.Get<int>("engine.window.grid size.width");
-	float getFloatTest = testFile.Get<float>("engine.game controller.thumb stick dead zone");
-	double getDoubleTest = testFile.Get<double>("engine.game controller.trigger dead zone");
-	std::string getStringTest = testFile.Get<std::string>("engine.developer");
-	bool getBoolTest = testFile.Get<bool>("engine.vsync");
-
-	JsonFile arrayTextFile = JsonFile("content/test_level.json");
-	std::vector<int> levelData = arrayTextFile.GetArray<int>("level.tile grid");
+	JsonFile testFile = JsonFile("content/test.json");
 	
+	// Get<T>() Tests
+	int getIntTest = testFile.Get<int>("value test.int");
+	float getFloatTest = testFile.Get<float>("value test.float");
+	double getDoubleTest = testFile.Get<double>("value test.double");
+	std::string getStringTest = testFile.Get<std::string>("value test.string");
+	bool getBoolTest = testFile.Get<bool>("value test.boolean");
 
-	// Close the test program
+	// GetArray<T>() Tests
+	std::vector<int> getIntArrayTest = testFile.GetArray<int>("array test.int array");
+	std::vector<float> getFloatArrayTest = testFile.GetArray<float>("array test.float array");
+	std::vector<double> getDoubleArrayTest = testFile.GetArray<double>("array test.double array");
+	std::vector<std::string> getStringArrayTest = testFile.GetArray<std::string>("array test.string array");
+	std::vector<bool> getBoolArrayTest = testFile.GetArray<bool>("array test.boolean array");
+	
+	// Close the program
 	return 0;
 }
