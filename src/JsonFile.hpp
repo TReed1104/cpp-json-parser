@@ -353,7 +353,8 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 		}
 	}
 	else {
-
+		std::cout << "JsonFile.hpp >>>> No key was defined for Get<T>() to use for traversal" << std::endl;
+		return;
 	}
 }
 template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const T& value) {
