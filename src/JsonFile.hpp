@@ -411,6 +411,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 	}
 }
 template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const std::vector<T>& valueArray) {
+	// Check we've been given a key
 	if (objectName != "") {
 		// check the file is actually loaded
 		if (isFileLoaded) {
@@ -419,8 +420,65 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 			// Iterate through our substrings to traverse the JSON DOM
 			const size_t sizeOfSplitString = splitString.size();
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
-
+				if (i == 0) {
+					if (!jsonDocument->HasMember(splitString.front().c_str())) {
+						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+						return;
+					}
+					value = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+				}
+				else {
+					if (!value->IsArray()) {
+						if (value->HasMember(splitString[i].c_str())) {
+							value = &(*value)[splitString[i].c_str()];
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+							return;
+						}
+					}
+					else {
+						// Point to the object/key/array at the indicated index in the array
+						int arraySize = value->Size();
+						int indexOfValue = 0;
+						// try and convert the substring to an int, if not return default
+						try {
+							indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+						}
+						catch (...) {
+							std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
+							return;
+						}
+						// Check the value is accessible in the bounds of the array
+						if (arraySize > 0) {
+							if (arraySize > indexOfValue) {
+								value = &(*value)[indexOfValue];
+							}
+							else {
+								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
+								return;
+							}
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
+							return;
+						}
+					}
+				}
 			}
+			// Check we haven't ended up with a JSON object instead of a value
+			if (value->IsObject()) {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
+				return;
+			}
+			// Check we haven't ended up with a key that isn't an array
+			if (!value->IsArray()) {
+				std::cout << "JsonFile.hpp >>>> " << objectName << " is not an array" << std::endl;
+				return;
+			}
+
+			// We've reached our depth in the DOM, amend the value
+
 		}
 		else {
 			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
