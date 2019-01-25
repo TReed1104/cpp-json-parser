@@ -61,6 +61,7 @@ JsonFile::~JsonFile() {
 
 // Loading functions
 bool JsonFile::Load(const std::string& fileName) {
+	this->fileName = fileName;
 	std::ifstream fileStream(fileName);
 	rapidjson::IStreamWrapper inputStream(fileStream);
 	jsonDocument = new rapidjson::Document();
