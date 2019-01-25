@@ -391,12 +391,13 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 					}
 				}
 			}
+			// Check we haven't ended up with a JSON object instead of a value
 			if (value->IsObject()) {
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return;
 			}
 			
-
+			// We've reached our depth in the DOM, amend the value
 			
 		}
 		else {
