@@ -23,6 +23,9 @@ public:
 	// Sets
 	template <typename T> void Set(const std::string& objectName, const T& value);
 	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& valueArray);
+	// Appends
+	template <typename T> void Add(const std::string& objectName, const T& value);
+	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& valueArray);
 
 
 private:
