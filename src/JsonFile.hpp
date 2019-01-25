@@ -40,7 +40,7 @@ private:
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
-	template <typename T> void SetValue(rapidjson::Value& jsonValue, const T& inputValue);
+	template <typename T> bool SetValue(rapidjson::Value& jsonValue, const T& inputValue);
 
 };
 
@@ -343,52 +343,57 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 }
 
 // Set value functions, uses Templating overrides
-template<typename T> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const T& inputValue) {
-	return;
+template<typename T> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const T& inputValue) {
+	return false;
 }
-template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const int& inputValue) {
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const int& inputValue) {
 	if (jsonValue.IsInt()) {
 		jsonValue.SetInt(inputValue);
+		return true;
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not an Int" << std::endl;
-		return;
+		return false;
 	}
 }
-template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const float& inputValue) {
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const float& inputValue) {
 	if (jsonValue.IsFloat()) {
 		jsonValue.SetFloat(inputValue);
+		return true;
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a Float" << std::endl;
-		return;
+		return false;
 	}
 }
-template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const double& inputValue) {
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const double& inputValue) {
 	if (jsonValue.IsDouble()) {
 		jsonValue.SetDouble(inputValue);
+		return true;
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a Double" << std::endl;
-		return;
+		return false;
 	}
 }
-template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const std::string& inputValue) {
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const std::string& inputValue) {
 	if (jsonValue.IsString()) {
 		jsonValue.SetString(inputValue.c_str(), inputValue.size());
+		return true;
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a String" << std::endl;
-		return;
+		return false;
 	}
 }
-template<> inline void JsonFile::SetValue(rapidjson::Value& jsonValue, const bool& inputValue) {
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const bool& inputValue) {
 	if (jsonValue.IsBool()) {
 		jsonValue.SetBool(inputValue);
+		return true;
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> value is not a Boolean" << std::endl;
-		return;
+		return false;
 	}
 }
 
@@ -454,7 +459,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 				std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
 				return;
 			}
-			
+
 			// We've reached our depth in the DOM, amend the value
 			SetValue<T>(*jsonValue, inputValue);
 			return;	// For break pointing
