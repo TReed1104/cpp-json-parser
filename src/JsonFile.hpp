@@ -38,7 +38,7 @@ private:
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& object);
-	template <typename T> T SetValue(const rapidjson::Value& object, const T& value);
+	template <typename T> void SetValue(const rapidjson::Value& object, const T& value);
 
 };
 
@@ -121,7 +121,7 @@ template<> inline bool JsonFile::GetDefaultValue() {
 	return false;
 }
 
-// Get value functions, uses Templating
+// Get value functions, uses Templating overrides
 template<typename T> inline T JsonFile::GetValue(const rapidjson::Value& object) {
 	return GetDefaultValue<T>();
 }
@@ -343,7 +343,12 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 	}
 }
 
-// Set Functions, uses Templating
+// Set value functions, uses Templating overrides
+template<typename T> inline void JsonFile::SetValue(const rapidjson::Value & object, const T & value) {
+	return;
+}
+
+// Set Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& value) {
 	// Check we've been given a key
 	if (objectName != "") {
