@@ -57,7 +57,214 @@ JsonFile::~JsonFile() {
 	delete jsonDocument;
 }
 
-// Loading functions
+// Splits a string using the given splitToken, E.g. ""The.Cat.Sat.On.The.Mat" splits with token '.' into Vector[6] = {The, Cat, Sat, On, The, Mat};
+std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit, const char& splitToken) {
+
+	std::vector<std::string> splitString;	// Stores the split sections of string for the return.
+	std::string currentSplit = "";			// Stores the current section being split off.
+
+	size_t sizeOfStringArray = stringToSplit.size();			// .Size() of a const so it never changes and we store it once.
+	for (size_t i = 0; i < sizeOfStringArray; i++) {
+		char currentChar = stringToSplit.at(i);
+		if (currentChar == splitToken) {
+			splitString.push_back(currentSplit);
+			currentSplit = "";
+		}
+		else {
+			currentSplit += currentChar;
+		}
+
+		if (i == sizeOfStringArray - 1 && currentChar != splitToken) {
+			// Catches the final section of string as there might not be a follow up split token.
+			splitString.push_back(currentSplit);
+		}
+	}
+
+	return splitString;
+}
+// Get Default value Functions, uses Templating
+template<typename T> inline T JsonFile::GetDefaultValue() {
+	return 0;
+}
+template<> inline std::string JsonFile::GetDefaultValue() {
+	return "";
+}
+// Get value functions, uses Templating overrides
+template<typename T> inline T JsonFile::GetValue(const rapidjson::Value& jsonValue) {
+	return GetDefaultValue<T>();
+}
+template<> inline int JsonFile::GetValue(const rapidjson::Value& jsonValue) {
+	if (jsonValue.IsInt()) {
+		return jsonValue.GetInt();
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not an Int" << std::endl;
+		return GetDefaultValue<int>();
+	}
+}
+template<> inline float JsonFile::GetValue(const rapidjson::Value& jsonValue) {
+	if (jsonValue.IsFloat()) {
+		return jsonValue.GetFloat();
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a float" << std::endl;
+		return GetDefaultValue<float>();
+	}
+}
+template<> inline double JsonFile::GetValue(const rapidjson::Value& jsonValue) {
+	if (jsonValue.IsDouble()) {
+		return jsonValue.GetDouble();
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a double" << std::endl;
+		return GetDefaultValue<double>();
+	}
+}
+template<> inline std::string JsonFile::GetValue(const rapidjson::Value& jsonValue) {
+	if (jsonValue.IsString()) {
+		return jsonValue.GetString();
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a std::string" << std::endl;
+		return GetDefaultValue<std::string>();
+	}
+}
+template<> inline bool JsonFile::GetValue(const rapidjson::Value& jsonValue) {
+	if (jsonValue.IsBool()) {
+		return jsonValue.GetBool();
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a boolean" << std::endl;
+		return GetDefaultValue<bool>();
+	}
+}
+// Set value functions, uses Templating overrides to check typing per data type
+template<typename T> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const T& inputValue) {
+	return false;
+}
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const int& inputValue) {
+	if (jsonValue.IsInt()) {
+		jsonValue.SetInt(inputValue);
+		return true;
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not an Int" << std::endl;
+		return false;
+	}
+}
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const float& inputValue) {
+	if (jsonValue.IsFloat()) {
+		jsonValue.SetFloat(inputValue);
+		return true;
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a Float" << std::endl;
+		return false;
+	}
+}
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const double& inputValue) {
+	if (jsonValue.IsDouble()) {
+		jsonValue.SetDouble(inputValue);
+		return true;
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a Double" << std::endl;
+		return false;
+	}
+}
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const std::string& inputValue) {
+	if (jsonValue.IsString()) {
+		jsonValue.SetString(inputValue.c_str(), (rapidjson::SizeType)inputValue.length(), jsonDocument->GetAllocator());
+		return true;
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a String" << std::endl;
+		return false;
+	}
+}
+template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const bool& inputValue) {
+	if (jsonValue.IsBool()) {
+		jsonValue.SetBool(inputValue);
+		return true;
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> value is not a Boolean" << std::endl;
+		return false;
+	}
+}
+// Set Array functions, uses templating to get round issues with std::string
+template<typename T> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
+	// Clear the array
+	jsonValue.SetArray();
+	// iterate through the passed vector and push each element to the json document
+	for (const T& item : inputValueArray) {
+		jsonValue.PushBack(item, jsonDocument->GetAllocator());
+	}
+}
+template<> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<std::string>& inputValueArray) {
+	// Clear the array
+	jsonValue.SetArray();
+	// iterate through the passed vector and push each element to the json document
+	for (const std::string& item : inputValueArray) {
+		jsonValue.PushBack(rapidjson::StringRef(item.c_str()), jsonDocument->GetAllocator());
+	}
+}
+// Insert value functions, uses templting to get round issues with std::string
+template<typename T> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue) {
+	// Check the json node we are at is an object, otherwise we can't insert a value
+	if (jsonValue.IsObject()) {
+		// Check the key we want to insert doesn't already exist at the current point in the document
+		if (!jsonValue.HasMember(keyName.c_str())) {
+			// Insert the new Key
+			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
+
+			// Save the changes to the JSON file we have made
+			if (!Save()) {
+				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				return;
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+			return;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+		return;
+	}
+}
+template<> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const std::string& inputValue) {
+	// Check the json node we are at is an object, otherwise we can't insert a value
+	if (jsonValue.IsObject()) {
+		// Check the key we want to insert doesn't already exist at the current point in the document
+		if (!jsonValue.HasMember(keyName.c_str())) {
+			// Insert the new Key
+			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), rapidjson::StringRef(inputValue.c_str()), jsonDocument->GetAllocator());
+
+			// Save the changes to the JSON file we have made
+			if (!Save()) {
+				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				return;
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+			return;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+		return;
+	}
+}
+// Insert value array functions, uses templting to get round issues with std::string
+template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value & jsonValue, const std::string & keyName, const std::vector<T>& inputValueArray) {
+}
+
+
+// Functions Exposed by the API
+// Import and Export functions
 bool JsonFile::Load(const std::string& fileName) {
 	this->fileName = fileName;
 	if (fileName != "NOT GIVEN") {
@@ -108,92 +315,7 @@ bool JsonFile::Save(void) {
 		return false;
 	}
 }
-
-// Splits a string using the given splitToken, E.g. ""The.Cat.Sat.On.The.Mat" splits with token '.' into Vector[6] = {The, Cat, Sat, On, The, Mat};
-std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit, const char& splitToken) {
-
-	std::vector<std::string> splitString;	// Stores the split sections of string for the return.
-	std::string currentSplit = "";			// Stores the current section being split off.
-
-	size_t sizeOfStringArray = stringToSplit.size();			// .Size() of a const so it never changes and we store it once.
-	for (size_t i = 0; i < sizeOfStringArray; i++) {
-		char currentChar = stringToSplit.at(i);
-		if (currentChar == splitToken) {
-			splitString.push_back(currentSplit);
-			currentSplit = "";
-		}
-		else {
-			currentSplit += currentChar;
-		}
-
-		if (i == sizeOfStringArray - 1 && currentChar != splitToken) {
-			// Catches the final section of string as there might not be a follow up split token.
-			splitString.push_back(currentSplit);
-		}
-	}
-
-	return splitString;
-}
-
-// Get Default value Functions, uses Templating
-template<typename T> inline T JsonFile::GetDefaultValue() {
-	return 0;
-}
-template<> inline std::string JsonFile::GetDefaultValue() {
-	return "";
-}
-
-// Get value functions, uses Templating overrides
-template<typename T> inline T JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	return GetDefaultValue<T>();
-}
-template<> inline int JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	if (jsonValue.IsInt()) {
-		return jsonValue.GetInt();
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not an Int" << std::endl;
-		return GetDefaultValue<int>();
-	}
-}
-template<> inline float JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	if (jsonValue.IsFloat()) {
-		return jsonValue.GetFloat();
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a float" << std::endl;
-		return GetDefaultValue<float>();
-	}
-}
-template<> inline double JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	if (jsonValue.IsDouble()) {
-		return jsonValue.GetDouble();
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a double" << std::endl;
-		return GetDefaultValue<double>();
-	}
-}
-template<> inline std::string JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	if (jsonValue.IsString()) {
-		return jsonValue.GetString();
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a std::string" << std::endl;
-		return GetDefaultValue<std::string>();
-	}
-}
-template<> inline bool JsonFile::GetValue(const rapidjson::Value& jsonValue) {
-	if (jsonValue.IsBool()) {
-		return jsonValue.GetBool();
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a boolean" << std::endl;
-		return GetDefaultValue<bool>();
-	}
-}
-
-// Get Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
+// Get Functions
 template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 	// Check we've been given a key
 	if (objectName != "") {
@@ -354,81 +476,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 		return std::vector<T>();
 	}
 }
-
-// Set value functions, uses Templating overrides to check typing per data type
-template<typename T> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const T& inputValue) {
-	return false;
-}
-template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const int& inputValue) {
-	if (jsonValue.IsInt()) {
-		jsonValue.SetInt(inputValue);
-		return true;
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not an Int" << std::endl;
-		return false;
-	}
-}
-template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const float& inputValue) {
-	if (jsonValue.IsFloat()) {
-		jsonValue.SetFloat(inputValue);
-		return true;
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a Float" << std::endl;
-		return false;
-	}
-}
-template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const double& inputValue) {
-	if (jsonValue.IsDouble()) {
-		jsonValue.SetDouble(inputValue);
-		return true;
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a Double" << std::endl;
-		return false;
-	}
-}
-template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const std::string& inputValue) {
-	if (jsonValue.IsString()) {
-		jsonValue.SetString(inputValue.c_str(), (rapidjson::SizeType)inputValue.length(), jsonDocument->GetAllocator());
-		return true;
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a String" << std::endl;
-		return false;
-	}
-}
-template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const bool& inputValue) {
-	if (jsonValue.IsBool()) {
-		jsonValue.SetBool(inputValue);
-		return true;
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> value is not a Boolean" << std::endl;
-		return false;
-	}
-}
-
-// Set Array functions, uses templating to get round issues with std::string
-template<typename T> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
-	// Clear the array
-	jsonValue.SetArray();
-	// iterate through the passed vector and push each element to the json document
-	for (const T& item : inputValueArray) {
-		jsonValue.PushBack(item, jsonDocument->GetAllocator());
-	}
-}
-template<> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<std::string>& inputValueArray) {
-	// Clear the array
-	jsonValue.SetArray();
-	// iterate through the passed vector and push each element to the json document
-	for (const std::string& item : inputValueArray) {
-		jsonValue.PushBack(rapidjson::StringRef(item.c_str()), jsonDocument->GetAllocator());
-	}
-}
-
-// Set Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
+// Set Functions
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& inputValue) {
 	// Check we've been given a key
 	if (objectName != "") {
@@ -596,62 +644,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 		return;
 	}
 }
-
-// Insert value functions, uses templting to get round issues with std::string
-template<typename T> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue) {
-	// Check the json node we are at is an object, otherwise we can't insert a value
-	if (jsonValue.IsObject()) {
-		// Check the key we want to insert doesn't already exist at the current point in the document
-		if (!jsonValue.HasMember(keyName.c_str())) {
-			// Insert the new Key
-			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
-
-			// Save the changes to the JSON file we have made
-			if (!Save()) {
-				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
-				return;
-			}
-		}
-		else {
-			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
-			return;
-		}
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
-		return;
-	}
-}
-template<> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const std::string& inputValue) {
-	// Check the json node we are at is an object, otherwise we can't insert a value
-	if (jsonValue.IsObject()) {
-		// Check the key we want to insert doesn't already exist at the current point in the document
-		if (!jsonValue.HasMember(keyName.c_str())) {
-			// Insert the new Key
-			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), rapidjson::StringRef(inputValue.c_str()), jsonDocument->GetAllocator());
-
-			// Save the changes to the JSON file we have made
-			if (!Save()) {
-				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
-				return;
-			}
-		}
-		else {
-			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
-			return;
-		}
-	}
-	else {
-		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
-		return;
-	}
-}
-
-// Insert value array functions, uses templting to get round issues with std::string
-template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value & jsonValue, const std::string & keyName, const std::vector<T>& inputValueArray) {
-}
-
-// Inserts Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
+// Inserts Functions
 template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue) {
 	// Check the file is loaded
 	if (isFileLoaded) {
@@ -790,8 +783,7 @@ template<typename T> inline void JsonFile::InsertArray(const std::string& positi
 		return;
 	}
 }
-
-// Remove Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
+// Remove Functions
 template<typename T> inline void JsonFile::Remove(const std::string& objectName) {
 
 }
