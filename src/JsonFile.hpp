@@ -617,7 +617,14 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 			}
 		}
 		else {
-			
+			for (size_t i = 0; i < sizeOfSplitString; i++) {
+				if (i == 0) {
+
+				}
+				else {
+
+				}
+			}
 		}
 	}
 	else {
