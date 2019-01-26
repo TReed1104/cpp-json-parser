@@ -590,12 +590,16 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 		return;
 	}
 }
+
+// Add Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline void JsonFile::Add(const std::string & objectName, const T & inputValue) {
 
 }
 template<typename T> inline void JsonFile::AddArray(const std::string & objectName, const std::vector<T>& inputValueArray) {
 
 }
+
+// Remove Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline void JsonFile::Remove(const std::string & objectName) {
 
 }
