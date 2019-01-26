@@ -42,6 +42,7 @@ int main() {
 
 
 	testFileForSets.Insert<int>("", "insert test", 5);
+	testFileForSets.Insert<int>("", "insert test", 5);	// Checking if we have already added this key, should produce an error output
 
 	// Close the program
 	return 0;
