@@ -39,14 +39,17 @@ int main() {
 		testIntVector.push_back(i);
 	}
 	testFileForSets.SetArray<int>("array test.int array", testIntVector);
-
 	std::vector<std::string> stringVector;
 	stringVector.push_back("one");
 	stringVector.push_back("two");
 	stringVector.push_back("three");
 	testFileForSets.SetArray<std::string>("array test.string array", stringVector);
+	std::vector<bool> boolvector;
+	boolvector.push_back(true);
+	boolvector.push_back(false);
+	testFileForSets.SetArray<bool>("array test.boolean array", boolvector);
 
-
+	// Insert tests
 	testFileForSets.Insert<int>("", "insert int test", 5);
 	testFileForSets.Insert<int>("", "insert int test", 5);					// Checking if we have already added this key, should produce an error output
 	testFileForSets.Insert<int>("value test", "insert int test", 5);
