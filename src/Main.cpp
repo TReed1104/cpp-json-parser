@@ -42,7 +42,9 @@ int main() {
 
 
 	testFileForSets.Insert<int>("", "insert test", 5);
-	testFileForSets.Insert<int>("", "insert test", 5);	// Checking if we have already added this key, should produce an error output
+	testFileForSets.Insert<int>("", "insert test", 5);					// Checking if we have already added this key, should produce an error output
+	testFileForSets.Insert<int>("value test", "insert test", 5);
+	testFileForSets.Insert<int>("value test.int", "insert test", 5);	// Will fail because value test.int is a value, not an object
 
 	// Close the program
 	return 0;
