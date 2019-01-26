@@ -138,20 +138,8 @@ std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit,
 template<typename T> inline T JsonFile::GetDefaultValue() {
 	return 0;
 }
-template<> inline int JsonFile::GetDefaultValue() {
-	return 0;
-}
-template<> inline float JsonFile::GetDefaultValue() {
-	return 0.0f;
-}
-template<> inline double JsonFile::GetDefaultValue() {
-	return 0.0;
-}
 template<> inline std::string JsonFile::GetDefaultValue() {
 	return "";
-}
-template<> inline bool JsonFile::GetDefaultValue() {
-	return false;
 }
 
 // Get value functions, uses Templating overrides
