@@ -13,32 +13,34 @@
 
 class JsonFile {
 public:
-	bool isFileLoaded = false;
-	std::string fileName;
-
+	// Constructors and Deconstructors
 	JsonFile(const std::string& fileName = "NOT GIVEN");
 	~JsonFile();
 
-	// Gets
-	template <typename T> T Get(const std::string& objectName);
-	template <typename T> std::vector<T> GetArray(const std::string& objectName);
-	// Sets
-	template <typename T> void Set(const std::string& objectName, const T& inputValue);
-	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& inputValueArray);
-	// Appends
-	template <typename T> void Add(const std::string& objectName, const T& inputValue);
-	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& inputValueArray);
-	// Removes
-	template <typename T> void Remove(const std::string& objectName);
-
+	// Load and Save exposed to users
 	bool Load(const std::string& fileName);
 	bool Save(void);
-
+	// Gets Exposed by API
+	template <typename T> T Get(const std::string& objectName);
+	template <typename T> std::vector<T> GetArray(const std::string& objectName);
+	// Sets Exposed by API
+	template <typename T> void Set(const std::string& objectName, const T& inputValue);
+	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& inputValueArray);
+	// Appends Exposed by API
+	template <typename T> void Add(const std::string& objectName, const T& inputValue);
+	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& inputValueArray);
+	// Removes Exposed by API
+	template <typename T> void Remove(const std::string& objectName);
 
 private:
+	// Private Variables
+	std::string fileName = "";
+	bool isFileLoaded = false;
 	rapidjson::Document* jsonDocument = nullptr;
 
+	// Used for breaking down the traversal key given to the API exposed functions
 	std::vector<std::string> SplitString(const std::string& stringToSplit, const char& splitToken);
+	// Used for handling the template typing to ensure our values are valid
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
 	template <typename T> bool SetValue(rapidjson::Value& jsonValue, const T& inputValue);
