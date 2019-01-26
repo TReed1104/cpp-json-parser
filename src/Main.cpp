@@ -33,8 +33,8 @@ int main() {
 	testFileForSets.Set<std::string>("value test.string", "new value");
 	testFileForSets.Set<bool>("value test.boolean", true);
 
+	// Test SetVector<T>()
 	std::vector<int> testIntVector;
-
 	for (size_t i = 0; i < 10; i++) {
 		testIntVector.push_back(i);
 	}
