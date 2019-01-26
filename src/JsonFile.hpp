@@ -44,7 +44,7 @@ private:
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
 	template <typename T> bool SetValue(rapidjson::Value& jsonValue, const T& inputValue);
-
+	template <typename T> bool InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue);
 };
 
 // Constructors & Deconstructors
@@ -594,6 +594,62 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 	}
 }
 
+// Insert value functions, uses Templating overrides
+template<typename T> inline bool JsonFile::InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue) {
+	// Check the json node we are at is an object, otherwise we can't insert a value
+	if (jsonValue.IsObject()) {
+		// Check the key we want to insert doesn't already exist at the current point in the document
+		if (!jsonValue.HasMember(keyName.c_str())) {
+			// Insert the new Key
+			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
+
+			// Save the changes to the JSON file we have made
+			if (!Save()) {
+				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+			return false;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+		return false;
+	}
+}
+template<> inline bool JsonFile::InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const std::string& inputValue) {
+	// Check the json node we are at is an object, otherwise we can't insert a value
+	if (jsonValue.IsObject()) {
+		// Check the key we want to insert doesn't already exist at the current point in the document
+		if (!jsonValue.HasMember(keyName.c_str())) {
+			// Insert the new Key
+			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), rapidjson::StringRef(inputValue.c_str()), jsonDocument->GetAllocator());
+
+			// Save the changes to the JSON file we have made
+			if (!Save()) {
+				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+			return false;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+		return false;
+	}
+}
+
 // Inserts Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue) {
 	// Check the file is loaded
@@ -606,29 +662,7 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 		if (sizeOfSplitString == 0) {
 			// If the position to insert is the root
 			jsonValue = &(*jsonDocument);
-
-			// Check the json node we are at is an object, otherwise we can't insert a value
-			if (jsonValue->IsObject()) {
-				// Check the key we want to insert doesn't already exist at the current point in the document
-				if (!jsonValue->HasMember(keyName.c_str())) {
-					// Insert the new Key
-					jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
-
-					// Save the changes to the JSON file we have made
-					if (!Save()) {
-						std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
-						return;
-					}
-				}
-				else {
-					std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
-					return;
-				}
-			}
-			else {
-				std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
-				return;
-			}
+			InsertValue<T>(*jsonValue, keyName, inputValue);
 		}
 		else {
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
@@ -678,28 +712,7 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 					}
 				}
 			}
-			// Check the json node we are at is an object, otherwise we can't insert a value
-			if (jsonValue->IsObject()) {
-				// Check the key we want to insert doesn't already exist at the current point in the document
-				if (!jsonValue->HasMember(keyName.c_str())) {
-					// Insert the new Key
-					jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
-
-					// Save the changes to the JSON file we have made
-					if (!Save()) {
-						std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
-						return;
-					}
-				}
-				else {
-					std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
-					return;
-				}
-			}
-			else {
-				std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
-				return;
-			}
+			InsertValue<T>(*jsonValue, keyName, inputValue);
 		}
 	}
 	else {
