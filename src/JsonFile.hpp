@@ -600,4 +600,7 @@ template<typename T> inline void JsonFile::AddArray(const std::string & objectNa
 template<typename T> inline void JsonFile::Remove(const std::string & objectName) {
 
 }
+template<typename T> inline void JsonFile::RemoveArray(const std::string & objectName) {
+
+}
 #endif
