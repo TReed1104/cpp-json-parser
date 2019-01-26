@@ -64,6 +64,9 @@ int main() {
 	testFileForSets.InsertArray<bool>("", "insert array bool test", boolVector);
 	testFileForSets.InsertArray<std::string>("", "insert array string test", stringVector);
 
+	testFileForSets.Remove("value test.int");
+	testFileForSets.Remove("array test.int array.2");
+
 	// Close the program
 	return 0;
 }

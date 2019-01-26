@@ -30,7 +30,7 @@ public:
 	template <typename T> void Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue);
 	template <typename T> void InsertArray(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray);
 	// Removes Exposed by API
-	template <typename T> void Remove(const std::string& objectName);
+	void Remove(const std::string& objectName);
 
 private:
 	// Private Variables
@@ -264,7 +264,7 @@ template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value& js
 	if (jsonValue.IsObject()) {
 		// Check the key we want to insert doesn't already exist at the current point in the document
 		if (!jsonValue.HasMember(keyName.c_str())) {
-			
+
 			// Create the new Array in a JSON form
 			rapidjson::Value newArray;
 			newArray.SetArray();
@@ -273,8 +273,8 @@ template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value& js
 				newArray.PushBack(item, jsonDocument->GetAllocator());
 			}
 
-			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), newArray, jsonDocument->GetAllocator()); 
-			
+			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), newArray, jsonDocument->GetAllocator());
+
 
 			// Save the changes to the JSON file we have made
 			if (!Save()) {
@@ -847,7 +847,111 @@ template<typename T> inline void JsonFile::InsertArray(const std::string& positi
 	}
 }
 // Remove Functions
-template<typename T> inline void JsonFile::Remove(const std::string& objectName) {
+inline void JsonFile::Remove(const std::string& objectName) {
+	// Check we've been given a key
+	if (objectName != "") {
+		// check the file is actually loaded
+		if (isFileLoaded) {
+			std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+			rapidjson::Value* jsonValue = nullptr;
+			rapidjson::Value* jsonValueParent = nullptr;
+			// Iterate through our substrings to traverse the JSON DOM
+			const size_t sizeOfSplitString = splitString.size();
+			for (size_t i = 0; i < sizeOfSplitString; i++) {
+				if (i == 0) {
+					if (!jsonDocument->HasMember(splitString.front().c_str())) {
+						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+						return;
+					}
+					jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+					jsonValueParent = &(*jsonDocument)[splitString.front().c_str()];
+				}
+				else {
+					if (!jsonValue->IsArray()) {
+						if (jsonValue->HasMember(splitString[i].c_str())) {
+							jsonValueParent = jsonValue;
+							jsonValue = &(*jsonValue)[splitString[i].c_str()];
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+							return;
+						}
+					}
+					else {
+						// Point to the object/key/array at the indicated index in the array
+						int arraySize = jsonValue->Size();
+						int indexOfValue = 0;
+						// try and convert the substring to an int, if not return default
+						try {
+							indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+						}
+						catch (...) {
+							std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
+							return;
+						}
+						// Check the value is accessible in the bounds of the array
+						if (arraySize > 0) {
+							if (arraySize > indexOfValue) {
+								jsonValueParent = jsonValue;
+								jsonValue = &(*jsonValue)[indexOfValue];
+							}
+							else {
+								std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
+								return;
+							}
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
+							return;
+						}
+					}
+				}
+			}
 
+			if (!jsonValueParent->IsArray()) {
+				if (jsonValueParent->EraseMember(rapidjson::StringRef(splitString.back().c_str()))) {
+					Save();
+				}
+				else {
+					std::cout << "JsonFile.hpp >>>> Couldn't find key to remove" << std::endl;
+					return;
+				}
+			}
+			else {
+				int arraySize = jsonValueParent->Size();
+				int indexOfValue = 0;
+				// try and convert the substring to an int, if not return default
+				try {
+					indexOfValue = std::stoi(splitString.back());	// convert from our substring to our indexer
+				}
+				catch (...) {
+					std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString.back() << " is invalid as an index value" << std::endl;
+					return;
+				}
+				if (arraySize > 0) {
+					if (arraySize > indexOfValue) {
+						jsonValueParent->Erase(jsonValue);
+						Save();
+					}
+					else {
+						std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
+						return;
+					}
+				}
+				else {
+					std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
+					return;
+				}
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Remove()" << std::endl;
+			return;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> No key was defined for Remove() to use for traversal" << std::endl;
+		return;
+	}
 }
 #endif
