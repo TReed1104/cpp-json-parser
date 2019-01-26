@@ -47,7 +47,8 @@ int main() {
 	testFileForSets.Insert<int>("value test.int", "insert int test", 5);	// Will fail because value test.int is a value, not an object
 	testFileForSets.Insert<float>("", "insert float test", 5.0f);
 	testFileForSets.Insert<double>("", "insert double test", 5.0);
-	testFileForSets.Insert<bool>("", "insert bool test", "example");
+	testFileForSets.Insert<std::string>("", "insert string test", "example");
+	testFileForSets.Insert<bool>("", "insert bool test", false);
 
 
 	// Close the program
