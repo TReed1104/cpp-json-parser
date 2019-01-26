@@ -421,6 +421,7 @@ template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const boo
 	}
 }
 
+// Set Array functions, uses templting to get round issues with std::string
 template<typename T> inline void JsonFile::SetArrayValue(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
 	// Clear the array
 	jsonValue.SetArray();
