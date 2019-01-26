@@ -1,4 +1,4 @@
-#include "JsonFile.hpp"
+#include "JsonParser.hpp"
 
 int main() {
 	// Load the File
