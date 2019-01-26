@@ -594,4 +594,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 template<typename T> inline void JsonFile::Add(const std::string & objectName, const T & inputValue) {
 
 }
+template<typename T> inline void JsonFile::AddArray(const std::string & objectName, const std::vector<T>& inputValueArray) {
+
+}
 #endif
