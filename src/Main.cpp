@@ -38,16 +38,16 @@ int main() {
 	for (size_t i = 0; i < 10; i++) {
 		intVector.push_back(i);
 	}
-	testFileForSets.SetArray<int>("array test.int array", intVector);
+	testFileForSets.Set<int>("array test.int array", intVector);
 	std::vector<std::string> stringVector;
 	stringVector.push_back("one");
 	stringVector.push_back("two");
 	stringVector.push_back("three");
-	testFileForSets.SetArray<std::string>("array test.string array", stringVector);
+	testFileForSets.Set<std::string>("array test.string array", stringVector);
 	std::vector<bool> boolVector;
 	boolVector.push_back(true);
 	boolVector.push_back(false);
-	testFileForSets.SetArray<bool>("array test.boolean array", boolVector);
+	testFileForSets.Set<bool>("array test.boolean array", boolVector);
 
 	// Insert tests
 	testFileForSets.Insert<int>("", "insert int test", 5);
@@ -59,10 +59,10 @@ int main() {
 	testFileForSets.Insert<std::string>("", "insert string test", "example");
 	testFileForSets.Insert<bool>("", "insert bool test", false);
 
-	testFileForSets.InsertArray<int>("", "insert array int test", intVector);
-	testFileForSets.InsertArray<int>("array test", "insert array int test", intVector);
-	testFileForSets.InsertArray<bool>("", "insert array bool test", boolVector);
-	testFileForSets.InsertArray<std::string>("", "insert array string test", stringVector);
+	testFileForSets.Insert<int>("", "insert array int test", intVector);
+	testFileForSets.Insert<int>("array test", "insert array int test", intVector);
+	testFileForSets.Insert<bool>("", "insert array bool test", boolVector);
+	testFileForSets.Insert<std::string>("", "insert array string test", stringVector);
 
 	testFileForSets.Remove("value test.int");
 	testFileForSets.Remove("array test.int array.2");

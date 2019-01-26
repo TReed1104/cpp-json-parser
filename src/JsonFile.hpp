@@ -25,10 +25,10 @@ public:
 	template <typename T> std::vector<T> GetArray(const std::string& objectName);
 	// Sets Exposed by API
 	template <typename T> void Set(const std::string& objectName, const T& inputValue);
-	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& inputValueArray);
+	template <typename T> void Set(const std::string& objectName, const std::vector<T>& inputValueArray);
 	// Inserts Exposed by API
 	template <typename T> void Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue);
-	template <typename T> void InsertArray(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray);
+	template <typename T> void Insert(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray);
 	// Removes Exposed by API
 	void Remove(const std::string& objectName);
 
@@ -623,7 +623,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 		return;
 	}
 }
-template<typename T> inline void JsonFile::SetArray(const std::string& objectName, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::Set(const std::string& objectName, const std::vector<T>& inputValueArray) {
 	// Check we've been given a key
 	if (objectName != "") {
 		// check the file is actually loaded
@@ -777,7 +777,7 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 		return;
 	}
 }
-template<typename T> inline void JsonFile::InsertArray(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray) {
 	// Check the file is loaded
 	if (isFileLoaded) {
 		std::vector<std::string> splitString = SplitString(positionToInsert, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
