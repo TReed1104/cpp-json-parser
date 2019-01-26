@@ -46,6 +46,7 @@ private:
 	template <typename T> bool SetValue(rapidjson::Value& jsonValue, const T& inputValue);
 	template <typename T> void SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray);
 	template <typename T> void InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue);
+	template <typename T> void InsertValueArray(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<T>& inputValueArray);
 };
 
 // Constructors & Deconstructors
@@ -354,7 +355,7 @@ template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string&
 	}
 }
 
-// Set value functions, uses Templating overrides
+// Set value functions, uses Templating overrides to check typing per data type
 template<typename T> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const T& inputValue) {
 	return false;
 }
@@ -409,7 +410,7 @@ template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const boo
 	}
 }
 
-// Set Array functions, uses templting to get round issues with std::string
+// Set Array functions, uses templating to get round issues with std::string
 template<typename T> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
 	// Clear the array
 	jsonValue.SetArray();
@@ -596,7 +597,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 	}
 }
 
-// Insert value functions, uses Templating overrides
+// Insert value functions, uses templting to get round issues with std::string
 template<typename T> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue) {
 	// Check the json node we are at is an object, otherwise we can't insert a value
 	if (jsonValue.IsObject()) {
@@ -644,6 +645,10 @@ template<> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const 
 		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
 		return;
 	}
+}
+
+// Insert value array functions, uses templting to get round issues with std::string
+template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value & jsonValue, const std::string & keyName, const std::vector<T>& inputValueArray) {
 }
 
 // Inserts Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
