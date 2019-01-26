@@ -22,13 +22,13 @@ public:
 	bool Save(void);
 	// Gets Exposed by API
 	template <typename T> T Get(const std::string& objectName);
-	template <typename T> std::vector<T> GetArray(const std::string& objectName);
+	template <typename T> std::vector<T> GetVector(const std::string& objectName);
 	// Sets Exposed by API
 	template <typename T> void Set(const std::string& objectName, const T& inputValue);
-	template <typename T> void Set(const std::string& objectName, const std::vector<T>& inputValueArray);
+	template <typename T> void Set(const std::string& objectName, const std::vector<T>& inputValueVector);
 	// Inserts Exposed by API
 	template <typename T> void Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue);
-	template <typename T> void Insert(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray);
+	template <typename T> void Insert(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueVector);
 	// Removes Exposed by API
 	void Remove(const std::string& objectName);
 
@@ -44,9 +44,9 @@ private:
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
 	template <typename T> bool SetValue(rapidjson::Value& jsonValue, const T& inputValue);
-	template <typename T> void SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray);
+	template <typename T> void SetVectorOfValues(rapidjson::Value& jsonValue, const std::vector<T>& inputValueVector);
 	template <typename T> void InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue);
-	template <typename T> void InsertValueArray(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<T>& inputValueArray);
+	template <typename T> void InsertVectorOfValues(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<T>& inputValueVector);
 };
 
 // Constructors & Deconstructors
@@ -193,19 +193,19 @@ template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const boo
 	}
 }
 // Set Array functions, uses templating to get round issues with std::string
-template<typename T> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::SetVectorOfValues(rapidjson::Value& jsonValue, const std::vector<T>& inputValueVector) {
 	// Clear the array
 	jsonValue.SetArray();
 	// iterate through the passed vector and push each element to the json document
-	for (const T& item : inputValueArray) {
+	for (const T& item : inputValueVector) {
 		jsonValue.PushBack(item, jsonDocument->GetAllocator());
 	}
 }
-template<> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<std::string>& inputValueArray) {
+template<> inline void JsonFile::SetVectorOfValues(rapidjson::Value& jsonValue, const std::vector<std::string>& inputValueVector) {
 	// Clear the array
 	jsonValue.SetArray();
 	// iterate through the passed vector and push each element to the json document
-	for (const std::string& item : inputValueArray) {
+	for (const std::string& item : inputValueVector) {
 		jsonValue.PushBack(rapidjson::StringRef(item.c_str()), jsonDocument->GetAllocator());
 	}
 }
@@ -259,7 +259,7 @@ template<> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const 
 	}
 }
 // Insert value array functions, uses templting to get round issues with std::string
-template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::InsertVectorOfValues(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<T>& inputValueVector) {
 	// Check the json node we are at is an object, otherwise we can't insert a value
 	if (jsonValue.IsObject()) {
 		// Check the key we want to insert doesn't already exist at the current point in the document
@@ -269,7 +269,7 @@ template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value& js
 			rapidjson::Value newArray;
 			newArray.SetArray();
 			// iterate through the passed vector and push each element to the json document
-			for (const T& item : inputValueArray) {
+			for (const T& item : inputValueVector) {
 				newArray.PushBack(item, jsonDocument->GetAllocator());
 			}
 
@@ -292,7 +292,7 @@ template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value& js
 		return;
 	}
 }
-template<> inline void JsonFile::InsertValueArray(rapidjson::Value & jsonValue, const std::string & keyName, const std::vector<std::string>& inputValueArray) {
+template<> inline void JsonFile::InsertVectorOfValues(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<std::string>& inputValueVector) {
 	// Check the json node we are at is an object, otherwise we can't insert a value
 	if (jsonValue.IsObject()) {
 		// Check the key we want to insert doesn't already exist at the current point in the document
@@ -302,7 +302,7 @@ template<> inline void JsonFile::InsertValueArray(rapidjson::Value & jsonValue, 
 			rapidjson::Value newArray;
 			newArray.SetArray();
 			// iterate through the passed vector and push each element to the json document
-			for (const std::string& item : inputValueArray) {
+			for (const std::string& item : inputValueVector) {
 				newArray.PushBack(rapidjson::StringRef(item.c_str()), jsonDocument->GetAllocator());
 			}
 
@@ -453,7 +453,7 @@ template<typename T> inline T JsonFile::Get(const std::string& objectName) {
 		return GetDefaultValue<T>();
 	}
 }
-template<typename T> inline std::vector<T> JsonFile::GetArray(const std::string& objectName) {
+template<typename T> inline std::vector<T> JsonFile::GetVector(const std::string& objectName) {
 	// Check we've been given a key
 	if (objectName != "") {
 		std::vector<T> result;
@@ -623,7 +623,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 		return;
 	}
 }
-template<typename T> inline void JsonFile::Set(const std::string& objectName, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::Set(const std::string& objectName, const std::vector<T>& inputValueVector) {
 	// Check we've been given a key
 	if (objectName != "") {
 		// check the file is actually loaded
@@ -690,7 +690,7 @@ template<typename T> inline void JsonFile::Set(const std::string& objectName, co
 				return;
 			}
 
-			SetValueArray<T>(*jsonValue, inputValueArray);
+			SetVectorOfValues<T>(*jsonValue, inputValueVector);
 
 			// If we've successfully set the value, save the doc
 			if (!Save()) {
@@ -777,7 +777,7 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 		return;
 	}
 }
-template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueVector) {
 	// Check the file is loaded
 	if (isFileLoaded) {
 		std::vector<std::string> splitString = SplitString(positionToInsert, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
@@ -788,7 +788,7 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 		if (sizeOfSplitString == 0) {
 			// If the position to insert is the root
 			jsonValue = &(*jsonDocument);
-			InsertValueArray<T>(*jsonValue, keyName, inputValueArray);
+			InsertVectorOfValues<T>(*jsonValue, keyName, inputValueVector);
 		}
 		else {
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
@@ -838,7 +838,7 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 					}
 				}
 			}
-			InsertValueArray<T>(*jsonValue, keyName, inputValueArray);
+			InsertVectorOfValues<T>(*jsonValue, keyName, inputValueVector);
 		}
 	}
 	else {
