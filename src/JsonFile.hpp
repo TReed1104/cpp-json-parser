@@ -605,13 +605,19 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 		if (sizeOfSplitString == 0) {
 			// If the position to insert is the root
 			jsonValue = &(*jsonDocument);
-			jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
+			if (!jsonValue->HasMember(keyName.c_str())) {
+				jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
+				if (!Save()) {
+					std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				}
+			}
+			else {
+				std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+			}
 		}
 		else {
 			
 		}
-
-		return; // for breakpoint catch
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Insert<T>()" << std::endl;
