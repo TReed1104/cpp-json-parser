@@ -595,7 +595,14 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 
 // Inserts Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue) {
-
+	// Check the file is loaded
+	if (isFileLoaded) {
+		
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Insert<T>()" << std::endl;
+		return;
+	}
 }
 template<typename T> inline void JsonFile::InsertArray(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray) {
 
