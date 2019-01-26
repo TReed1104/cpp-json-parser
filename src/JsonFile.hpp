@@ -44,6 +44,7 @@ private:
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
 	template <typename T> bool SetValue(rapidjson::Value& jsonValue, const T& inputValue);
+	template <typename T> void SetArrayValue(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray);
 	template <typename T> bool InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue);
 };
 
@@ -420,6 +421,23 @@ template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const boo
 	}
 }
 
+template<typename T> inline void JsonFile::SetArrayValue(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
+	// Clear the array
+	jsonValue.SetArray();
+	// iterate through the passed vector and push each element to the json document
+	for (const T& item : inputValueArray) {
+		jsonValue.PushBack(item, jsonDocument->GetAllocator());
+	}
+}
+template<> inline void JsonFile::SetArrayValue(rapidjson::Value& jsonValue, const std::vector<std::string>& inputValueArray) {
+	// Clear the array
+	jsonValue.SetArray();
+	// iterate through the passed vector and push each element to the json document
+	for (const std::string& item : inputValueArray) {
+		jsonValue.PushBack(rapidjson::StringRef(item.c_str()), jsonDocument->GetAllocator());
+	}
+}
+
 // Set Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
 template<typename T> inline void JsonFile::Set(const std::string& objectName, const T& inputValue) {
 	// Check we've been given a key
@@ -571,12 +589,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 				return;
 			}
 
-			// Clear the array
-			jsonValue->SetArray();
-			// iterate through the passed vector and push each element to the json document
-			for (const T& item : inputValueArray) {
-				jsonValue->PushBack(item, jsonDocument->GetAllocator());
-			}
+			SetArrayValue<T>(*jsonValue, inputValueArray);
 
 			// If we've successfully set the value, save the doc
 			if (!Save()) {
