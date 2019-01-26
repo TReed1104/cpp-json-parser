@@ -41,10 +41,14 @@ int main() {
 	testFileForSets.SetArray<int>("array test.int array", testIntVector);
 
 
-	testFileForSets.Insert<int>("", "insert test", 5);
-	testFileForSets.Insert<int>("", "insert test", 5);					// Checking if we have already added this key, should produce an error output
-	testFileForSets.Insert<int>("value test", "insert test", 5);
-	testFileForSets.Insert<int>("value test.int", "insert test", 5);	// Will fail because value test.int is a value, not an object
+	testFileForSets.Insert<int>("", "insert int test", 5);
+	testFileForSets.Insert<int>("", "insert int test", 5);					// Checking if we have already added this key, should produce an error output
+	testFileForSets.Insert<int>("value test", "insert int test", 5);
+	testFileForSets.Insert<int>("value test.int", "insert int test", 5);	// Will fail because value test.int is a value, not an object
+	testFileForSets.Insert<float>("", "insert float test", 5.0f);
+	testFileForSets.Insert<double>("", "insert double test", 5.0);
+	testFileForSets.Insert<bool>("", "insert bool test", "example");
+
 
 	// Close the program
 	return 0;
