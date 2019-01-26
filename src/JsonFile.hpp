@@ -597,7 +597,20 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue) {
 	// Check the file is loaded
 	if (isFileLoaded) {
+		std::vector<std::string> splitString = SplitString(positionToInsert, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+		rapidjson::Value* jsonValue = nullptr;
 		
+		// Iterate through our substrings to traverse the JSON DOM
+		const size_t sizeOfSplitString = splitString.size();
+		if (sizeOfSplitString == 0) {
+			// If the position to insert is the root
+
+		}
+		else {
+			
+		}
+
+		return; // for breakpoint catch
 	}
 	else {
 		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Insert<T>()" << std::endl;
