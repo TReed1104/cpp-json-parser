@@ -30,7 +30,6 @@ public:
 	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& inputValueArray);
 	// Removes
 	template <typename T> void Remove(const std::string& objectName);
-	template <typename T> void RemoveArray(const std::string& objectName);
 
 	bool Load(const std::string& fileName);
 	bool Save(void);
@@ -598,9 +597,6 @@ template<typename T> inline void JsonFile::AddArray(const std::string & objectNa
 
 }
 template<typename T> inline void JsonFile::Remove(const std::string & objectName) {
-
-}
-template<typename T> inline void JsonFile::RemoveArray(const std::string & objectName) {
 
 }
 #endif
