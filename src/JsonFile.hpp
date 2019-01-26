@@ -600,30 +600,105 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 	if (isFileLoaded) {
 		std::vector<std::string> splitString = SplitString(positionToInsert, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
 		rapidjson::Value* jsonValue = nullptr;
-		
+
 		// Iterate through our substrings to traverse the JSON DOM
 		const size_t sizeOfSplitString = splitString.size();
 		if (sizeOfSplitString == 0) {
 			// If the position to insert is the root
 			jsonValue = &(*jsonDocument);
-			if (!jsonValue->HasMember(keyName.c_str())) {
-				jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
-				if (!Save()) {
-					std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+
+			// Check the json node we are at is an object, otherwise we can't insert a value
+			if (jsonValue->IsObject()) {
+				// Check the key we want to insert doesn't already exist at the current point in the document
+				if (!jsonValue->HasMember(keyName.c_str())) {
+					// Insert the new Key
+					jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
+
+					// Save the changes to the JSON file we have made
+					if (!Save()) {
+						std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+						return;
+					}
+				}
+				else {
+					std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+					return;
 				}
 			}
 			else {
-				std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+				std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+				return;
 			}
 		}
 		else {
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
 				if (i == 0) {
-
+					if (!jsonDocument->HasMember(splitString.front().c_str())) {
+						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+						return;
+					}
+					jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
 				}
 				else {
-
+					if (!jsonValue->IsArray()) {
+						if (jsonValue->HasMember(splitString[i].c_str())) {
+							jsonValue = &(*jsonValue)[splitString[i].c_str()];
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+							return;
+						}
+					}
+					else {
+						// Point to the object/key/array at the indicated index in the array
+						int arraySize = jsonValue->Size();
+						int indexOfValue = 0;
+						// try and convert the substring to an int, if not return default
+						try {
+							indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+						}
+						catch (...) {
+							std::cout << "JsonFile.hpp >>>> " << positionToInsert << " " << splitString[i] << " is invalid as an index value" << std::endl;
+							return;
+						}
+						// Check the value is accessible in the bounds of the array
+						if (arraySize > 0) {
+							if (arraySize > indexOfValue) {
+								jsonValue = &(*jsonValue)[indexOfValue];
+							}
+							else {
+								std::cout << "JsonFile.hpp >>>> " << positionToInsert << " index: " << indexOfValue << " is out of bounds" << std::endl;
+								return;
+							}
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> " << positionToInsert << " Array is empty" << std::endl;
+							return;
+						}
+					}
 				}
+			}
+			// Check the json node we are at is an object, otherwise we can't insert a value
+			if (jsonValue->IsObject()) {
+				// Check the key we want to insert doesn't already exist at the current point in the document
+				if (!jsonValue->HasMember(keyName.c_str())) {
+					// Insert the new Key
+					jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
+
+					// Save the changes to the JSON file we have made
+					if (!Save()) {
+						std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+						return;
+					}
+				}
+				else {
+					std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+					return;
+				}
+			}
+			else {
+				std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+				return;
 			}
 		}
 	}
