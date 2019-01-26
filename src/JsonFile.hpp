@@ -597,4 +597,7 @@ template<typename T> inline void JsonFile::Add(const std::string & objectName, c
 template<typename T> inline void JsonFile::AddArray(const std::string & objectName, const std::vector<T>& inputValueArray) {
 
 }
+template<typename T> inline void JsonFile::Remove(const std::string & objectName) {
+
+}
 #endif
