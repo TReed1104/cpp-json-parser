@@ -1,5 +1,5 @@
-#ifndef PARSEJSON_JSONFILE_H_
-#define PARSEJSON_JSONFILE_H_
+#ifndef CPP_JSON_PARSER_JSONFILE_H_
+#define CPP_JSON_PARSER_JSONFILE_H_
 
 #include <iostream>
 #include <fstream>
