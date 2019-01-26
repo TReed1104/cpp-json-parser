@@ -44,7 +44,7 @@ private:
 	template <typename T> T GetDefaultValue();
 	template <typename T> T GetValue(const rapidjson::Value& jsonValue);
 	template <typename T> bool SetValue(rapidjson::Value& jsonValue, const T& inputValue);
-	template <typename T> void SetArrayValue(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray);
+	template <typename T> void SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray);
 	template <typename T> void InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue);
 };
 
@@ -410,7 +410,7 @@ template<> inline bool JsonFile::SetValue(rapidjson::Value& jsonValue, const boo
 }
 
 // Set Array functions, uses templting to get round issues with std::string
-template<typename T> inline void JsonFile::SetArrayValue(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<T>& inputValueArray) {
 	// Clear the array
 	jsonValue.SetArray();
 	// iterate through the passed vector and push each element to the json document
@@ -418,7 +418,7 @@ template<typename T> inline void JsonFile::SetArrayValue(rapidjson::Value& jsonV
 		jsonValue.PushBack(item, jsonDocument->GetAllocator());
 	}
 }
-template<> inline void JsonFile::SetArrayValue(rapidjson::Value& jsonValue, const std::vector<std::string>& inputValueArray) {
+template<> inline void JsonFile::SetValueArray(rapidjson::Value& jsonValue, const std::vector<std::string>& inputValueArray) {
 	// Clear the array
 	jsonValue.SetArray();
 	// iterate through the passed vector and push each element to the json document
@@ -578,7 +578,7 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 				return;
 			}
 
-			SetArrayValue<T>(*jsonValue, inputValueArray);
+			SetValueArray<T>(*jsonValue, inputValueArray);
 
 			// If we've successfully set the value, save the doc
 			if (!Save()) {
