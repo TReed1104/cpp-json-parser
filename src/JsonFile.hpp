@@ -97,6 +97,7 @@ bool JsonFile::Save(void) {
 			rapidjson::OStreamWrapper outputStreamWrapper(outFileStream);
 			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> fileWriter(outputStreamWrapper);
 			jsonDocument->Accept(fileWriter);
+			Load(fileName);	// Re-load the file now that we've changed it
 			return true;
 		}
 	}
