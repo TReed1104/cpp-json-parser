@@ -717,7 +717,73 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 	}
 }
 template<typename T> inline void JsonFile::InsertArray(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray) {
+	// Check the file is loaded
+	if (isFileLoaded) {
+		std::vector<std::string> splitString = SplitString(positionToInsert, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+		rapidjson::Value* jsonValue = nullptr;
 
+		// Iterate through our substrings to traverse the JSON DOM
+		const size_t sizeOfSplitString = splitString.size();
+		if (sizeOfSplitString == 0) {
+			// If the position to insert is the root
+			jsonValue = &(*jsonDocument);
+			//InsertValue<T>(*jsonValue, keyName, inputValue);
+		}
+		else {
+			for (size_t i = 0; i < sizeOfSplitString; i++) {
+				if (i == 0) {
+					if (!jsonDocument->HasMember(splitString.front().c_str())) {
+						std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+						return;
+					}
+					jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+				}
+				else {
+					if (!jsonValue->IsArray()) {
+						if (jsonValue->HasMember(splitString[i].c_str())) {
+							jsonValue = &(*jsonValue)[splitString[i].c_str()];
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+							return;
+						}
+					}
+					else {
+						// Point to the object/key/array at the indicated index in the array
+						int arraySize = jsonValue->Size();
+						int indexOfValue = 0;
+						// try and convert the substring to an int, if not return default
+						try {
+							indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+						}
+						catch (...) {
+							std::cout << "JsonFile.hpp >>>> " << positionToInsert << " " << splitString[i] << " is invalid as an index value" << std::endl;
+							return;
+						}
+						// Check the value is accessible in the bounds of the array
+						if (arraySize > 0) {
+							if (arraySize > indexOfValue) {
+								jsonValue = &(*jsonValue)[indexOfValue];
+							}
+							else {
+								std::cout << "JsonFile.hpp >>>> " << positionToInsert << " index: " << indexOfValue << " is out of bounds" << std::endl;
+								return;
+							}
+						}
+						else {
+							std::cout << "JsonFile.hpp >>>> " << positionToInsert << " Array is empty" << std::endl;
+							return;
+						}
+					}
+				}
+			}
+			//InsertValue<T>(*jsonValue, keyName, inputValue);
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Insert<T>()" << std::endl;
+		return;
+	}
 }
 
 // Remove Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
