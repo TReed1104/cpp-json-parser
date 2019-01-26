@@ -259,9 +259,72 @@ template<> inline void JsonFile::InsertValue(rapidjson::Value& jsonValue, const 
 	}
 }
 // Insert value array functions, uses templting to get round issues with std::string
-template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value & jsonValue, const std::string & keyName, const std::vector<T>& inputValueArray) {
-}
+template<typename T> inline void JsonFile::InsertValueArray(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<T>& inputValueArray) {
+	// Check the json node we are at is an object, otherwise we can't insert a value
+	if (jsonValue.IsObject()) {
+		// Check the key we want to insert doesn't already exist at the current point in the document
+		if (!jsonValue.HasMember(keyName.c_str())) {
+			
+			// Create the new Array in a JSON form
+			rapidjson::Value newArray;
+			newArray.SetArray();
+			// iterate through the passed vector and push each element to the json document
+			for (const T& item : inputValueArray) {
+				newArray.PushBack(item, jsonDocument->GetAllocator());
+			}
 
+			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), newArray, jsonDocument->GetAllocator()); 
+			
+
+			// Save the changes to the JSON file we have made
+			if (!Save()) {
+				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				return;
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+			return;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+		return;
+	}
+}
+template<> inline void JsonFile::InsertValueArray(rapidjson::Value & jsonValue, const std::string & keyName, const std::vector<std::string>& inputValueArray) {
+	// Check the json node we are at is an object, otherwise we can't insert a value
+	if (jsonValue.IsObject()) {
+		// Check the key we want to insert doesn't already exist at the current point in the document
+		if (!jsonValue.HasMember(keyName.c_str())) {
+
+			// Create the new Array in a JSON form
+			rapidjson::Value newArray;
+			newArray.SetArray();
+			// iterate through the passed vector and push each element to the json document
+			for (const std::string& item : inputValueArray) {
+				newArray.PushBack(rapidjson::StringRef(item.c_str()), jsonDocument->GetAllocator());
+			}
+
+			jsonValue.AddMember(rapidjson::StringRef(keyName.c_str()), newArray, jsonDocument->GetAllocator());
+
+
+			// Save the changes to the JSON file we have made
+			if (!Save()) {
+				std::cout << "JsonFile.hpp >>>> Failed to save file" << std::endl;
+				return;
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> Key: " << keyName << " Already exists in the document" << std::endl;
+			return;
+		}
+	}
+	else {
+		std::cout << "JsonFile.hpp >>>> Values can only be inserted into objects, not values" << std::endl;
+		return;
+	}
+}
 
 // Functions Exposed by the API
 // Import and Export functions
@@ -725,7 +788,7 @@ template<typename T> inline void JsonFile::InsertArray(const std::string& positi
 		if (sizeOfSplitString == 0) {
 			// If the position to insert is the root
 			jsonValue = &(*jsonDocument);
-			//InsertValue<T>(*jsonValue, keyName, inputValue);
+			InsertValueArray<T>(*jsonValue, keyName, inputValueArray);
 		}
 		else {
 			for (size_t i = 0; i < sizeOfSplitString; i++) {
@@ -775,7 +838,7 @@ template<typename T> inline void JsonFile::InsertArray(const std::string& positi
 					}
 				}
 			}
-			//InsertValue<T>(*jsonValue, keyName, inputValue);
+			InsertValueArray<T>(*jsonValue, keyName, inputValueArray);
 		}
 	}
 	else {
