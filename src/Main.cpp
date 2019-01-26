@@ -40,6 +40,9 @@ int main() {
 	}
 	testFileForSets.SetArray<int>("array test.int array", testIntVector);
 
+
+	testFileForSets.Insert<int>("", "insert test", 5);
+
 	// Close the program
 	return 0;
 }
