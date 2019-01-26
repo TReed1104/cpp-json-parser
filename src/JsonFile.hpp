@@ -26,9 +26,9 @@ public:
 	// Sets Exposed by API
 	template <typename T> void Set(const std::string& objectName, const T& inputValue);
 	template <typename T> void SetArray(const std::string& objectName, const std::vector<T>& inputValueArray);
-	// Appends Exposed by API
-	template <typename T> void Add(const std::string& objectName, const T& inputValue);
-	template <typename T> void AddArray(const std::string& objectName, const std::vector<T>& inputValueArray);
+	// Inserts Exposed by API
+	template <typename T> void Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue);
+	template <typename T> void InsertArray(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray);
 	// Removes Exposed by API
 	template <typename T> void Remove(const std::string& objectName);
 
@@ -593,16 +593,16 @@ template<typename T> inline void JsonFile::SetArray(const std::string& objectNam
 	}
 }
 
-// Add Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
-template<typename T> inline void JsonFile::Add(const std::string & objectName, const T & inputValue) {
+// Inserts Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
+template<typename T> inline void JsonFile::Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue) {
 
 }
-template<typename T> inline void JsonFile::AddArray(const std::string & objectName, const std::vector<T>& inputValueArray) {
+template<typename T> inline void JsonFile::InsertArray(const std::string& positionToInsert, const std::string& keyName, const std::vector<T>& inputValueArray) {
 
 }
 
 // Remove Functions exposed by the API, objectName should use the schema: key.key.index.value, etc.
-template<typename T> inline void JsonFile::Remove(const std::string & objectName) {
+template<typename T> inline void JsonFile::Remove(const std::string& objectName) {
 
 }
 #endif
