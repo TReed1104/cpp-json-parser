@@ -604,7 +604,8 @@ template<typename T> inline void JsonFile::Insert(const std::string& positionToI
 		const size_t sizeOfSplitString = splitString.size();
 		if (sizeOfSplitString == 0) {
 			// If the position to insert is the root
-
+			jsonValue = &(*jsonDocument);
+			jsonValue->AddMember(rapidjson::StringRef(keyName.c_str()), inputValue, jsonDocument->GetAllocator());
 		}
 		else {
 			
