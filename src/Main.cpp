@@ -67,6 +67,13 @@ int main() {
 	testFileForSets.Remove("value test.int");
 	testFileForSets.Remove("array test.int array.2");
 
+
+	int sizeTestInt = testFileForGets.SizeOfObjectArray("array test.int array");
+	int sizeTestFloat = testFileForGets.SizeOfObjectArray("array test.float array");
+	int sizeTestDouble = testFileForGets.SizeOfObjectArray("array test.double ardray");
+	int sizeTestString = testFileForGets.SizeOfObjectArray("array test.string array.1");
+	int sizeTestBool = testFileForGets.SizeOfObjectArray("array test.boolean array");
+
 	// Close the program
 	return 0;
 }
