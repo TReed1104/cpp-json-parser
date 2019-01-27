@@ -73,6 +73,9 @@ public:
 			return false;
 		}
 	}
+	const bool IsLoaded(void) {
+		return isFileLoaded;
+	}
 	// Get Functions
 	template<typename T> inline T Get(const std::string& objectName) {
 		// Check we've been given a key
