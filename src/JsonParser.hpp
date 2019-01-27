@@ -78,6 +78,87 @@ public:
 	const bool IsLoaded(void) {
 		return isFileLoaded;
 	}
+	const size_t SizeOfObjectArray(const std::string& objectName) {
+		// Check we've been given a key
+		if (objectName != "") {
+			// check the file is actually loaded
+			if (isFileLoaded) {
+				std::vector<std::string> splitString = SplitString(objectName, '.');	// this gives us the stack of node names to use to traverse the json file's structure, e.g. root.head.value
+				rapidjson::Value* jsonValue = nullptr;
+				// Iterate through our substrings to traverse the JSON DOM
+				const size_t sizeOfSplitString = splitString.size();
+				for (size_t i = 0; i < sizeOfSplitString; i++) {
+					if (i == 0) {
+						if (!jsonDocument->HasMember(splitString.front().c_str())) {
+							std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString.front() << std::endl;
+							return 0;
+						}
+						jsonValue = &(*jsonDocument)[splitString.front().c_str()];	// Get our root key
+					}
+					else {
+						if (!jsonValue->IsArray()) {
+							if (jsonValue->HasMember(splitString[i].c_str())) {
+								jsonValue = &(*jsonValue)[splitString[i].c_str()];
+							}
+							else {
+								std::cout << "JsonFile.hpp >>>> Could not find key: " << splitString[i] << std::endl;
+								return 0;
+							}
+						}
+						else {
+							// Point to the object/key/array at the indicated index in the array
+							int arraySize = jsonValue->Size();
+							int indexOfValue = 0;
+							// try and convert the substring to an int, if not return default
+							try {
+								indexOfValue = std::stoi(splitString[i]);	// convert from our substring to our indexer
+							}
+							catch (...) {
+								std::cout << "JsonFile.hpp >>>> " << objectName << " " << splitString[i] << " is invalid as an index value" << std::endl;
+								return 0;
+							}
+							// Check the value is accessible in the bounds of the array
+							if (arraySize > 0) {
+								if (arraySize > indexOfValue) {
+									jsonValue = &(*jsonValue)[indexOfValue];
+								}
+								else {
+									std::cout << "JsonFile.hpp >>>> " << objectName << " index: " << indexOfValue << " is out of bounds" << std::endl;
+									return 0;
+								}
+							}
+							else {
+								std::cout << "JsonFile.hpp >>>> " << objectName << " Array is empty" << std::endl;
+								return 0;
+							}
+						}
+					}
+				}
+				// Check we haven't ended up with a JSON object instead of a value
+				if (jsonValue->IsObject()) {
+					std::cout << "JsonFile.hpp >>>> " << objectName << " is an object" << std::endl;
+					return 0;
+				}
+
+				// Check we haven't ended up with a key that isn't an array
+				if (!jsonValue->IsArray()) {
+					std::cout << "JsonFile.hpp >>>> " << objectName << " is not an array" << std::endl;
+					return 0;
+				}
+
+				// Return the size of the array
+				return jsonValue->Size();
+			}
+			else {
+				std::cout << "JsonFile.hpp >>>> File is not loaded, cannot call Get<T>()" << std::endl;
+				return 0;
+			}
+		}
+		else {
+			std::cout << "JsonFile.hpp >>>> No key was defined for SizeOfObjectArray() to use" << std::endl;
+			return 0;
+		}
+	}
 	
 	// Get Functions exposed by the API
 	template<typename T> inline T Get(const std::string& objectName) {
