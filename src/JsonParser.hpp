@@ -21,8 +21,8 @@ public:
 		delete jsonDocument;
 	}
 
-	// Functions Exposed by the API
-	// Import and Export functions
+
+	// Import and Export functions exposed by the API
 	bool Load(const std::string& fileName) {
 		this->fileName = fileName;
 		if (fileName != "NOT GIVEN") {
@@ -73,10 +73,13 @@ public:
 			return false;
 		}
 	}
+
+	// general functions exposed by the API
 	const bool IsLoaded(void) {
 		return isFileLoaded;
 	}
-	// Get Functions
+	
+	// Get Functions exposed by the API
 	template<typename T> inline T Get(const std::string& objectName) {
 		// Check we've been given a key
 		if (objectName != "") {
@@ -237,7 +240,8 @@ public:
 			return std::vector<T>();
 		}
 	}
-	// Set Functions
+	
+	// Set Functions exposed by the API
 	template<typename T> inline void Set(const std::string& objectName, const T& inputValue) {
 		// Check we've been given a key
 		if (objectName != "") {
@@ -405,7 +409,8 @@ public:
 			return;
 		}
 	}
-	// Inserts Functions
+	
+	// Inserts Functions exposed by the API
 	template<typename T> inline void Insert(const std::string& positionToInsert, const std::string& keyName, const T& inputValue) {
 		// Check the file is loaded
 		if (isFileLoaded) {
@@ -544,7 +549,8 @@ public:
 			return;
 		}
 	}
-	// Remove Functions
+	
+	// Remove Functions exposed by the API
 	inline void Remove(const std::string& objectName) {
 		// Check we've been given a key
 		if (objectName != "") {
@@ -659,7 +665,6 @@ private:
 	bool isFileLoaded = false;
 	rapidjson::Document* jsonDocument = nullptr;
 
-
 	// Splits a string using the given splitToken, E.g. ""The.Cat.Sat.On.The.Mat" splits with token '.' into Vector[6] = {The, Cat, Sat, On, The, Mat};
 	std::vector<std::string> JsonFile::SplitString(const std::string& stringToSplit, const char& splitToken) {
 
@@ -685,6 +690,7 @@ private:
 
 		return splitString;
 	}
+	
 	// Get Default value Functions, uses Templating
 	template<typename T> inline T GetDefaultValue() {
 		return 0;
@@ -692,6 +698,7 @@ private:
 	template<> inline std::string GetDefaultValue() {
 		return "";
 	}
+	
 	// Get value functions, uses Templating overrides
 	template<typename T> inline T GetValue(const rapidjson::Value& jsonValue) {
 		return GetDefaultValue<T>();
@@ -741,6 +748,7 @@ private:
 			return GetDefaultValue<bool>();
 		}
 	}
+	
 	// Set value functions, uses Templating overrides to check typing per data type
 	template<typename T> inline bool SetValue(rapidjson::Value& jsonValue, const T& inputValue) {
 		return false;
@@ -795,6 +803,7 @@ private:
 			return false;
 		}
 	}
+	
 	// Set Array functions, uses templating to get round issues with std::string
 	template<typename T> inline void SetVectorOfValues(rapidjson::Value& jsonValue, const std::vector<T>& inputValueVector) {
 		// Clear the array
@@ -812,6 +821,7 @@ private:
 			jsonValue.PushBack(rapidjson::StringRef(item.c_str()), jsonDocument->GetAllocator());
 		}
 	}
+	
 	// Insert value functions, uses templting to get round issues with std::string
 	template<typename T> inline void InsertValue(rapidjson::Value& jsonValue, const std::string& keyName, const T& inputValue) {
 		// Check the json node we are at is an object, otherwise we can't insert a value
@@ -861,6 +871,7 @@ private:
 			return;
 		}
 	}
+	
 	// Insert value array functions, uses templting to get round issues with std::string
 	template<typename T> inline void InsertVectorOfValues(rapidjson::Value& jsonValue, const std::string& keyName, const std::vector<T>& inputValueVector) {
 		// Check the json node we are at is an object, otherwise we can't insert a value
