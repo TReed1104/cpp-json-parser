@@ -7,4 +7,4 @@ ECHO - Cleaning Build Folder
 RD /s /q build
 
 ECHO - Cleaning Conan Cache
-conan remove * -f
+conan remove -f rapidjson/1.1.0
